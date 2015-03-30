@@ -1,0 +1,4 @@
+git+https://github.com/edx/XBlock.git@b1f36c0c6f515b7c0d39744a46661d25cfed89cd#egg=XBlock
+
+django>=1.4,<1.5
+South==1.0.1

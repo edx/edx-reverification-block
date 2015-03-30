@@ -1,0 +1,9 @@
+git+https://github.com/edx/xblock-sdk.git@44d66a1091947fda130cb3e36135f6dfc3b135f0#egg=xblock-sdk
+
+coverage==3.7.1
+ddt==0.8.0
+django-nose==1.3
+mock==1.0.1
+pep8==1.5.7
+pylint<1.0
+
