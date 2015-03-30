@@ -3,7 +3,7 @@ all: install test
 .PHONY: install test
 
 install-python:
-	pip install -r requirements/base.txt
+	./scripts/install-python.sh
 
 install-test:
 	pip install -q -r requirements/test.txt
@@ -13,5 +13,5 @@ install: install-python install-test
 test:
 	./scripts/test.sh
 
-workbench:
+workbench: install-python
 	./scripts/workbench.sh

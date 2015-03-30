@@ -56,3 +56,6 @@ coverage
 
 # logging
 logs/*.log*
+
+# reverification-specific
+reverification_db
