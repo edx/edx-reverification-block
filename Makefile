@@ -10,7 +10,7 @@ install-test:
 
 install: install-python install-test
 
-test:
+test: install-test
 	./scripts/test.sh
 
 workbench: install-python
