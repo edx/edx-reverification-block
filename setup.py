@@ -2,9 +2,10 @@
 from setuptools import setup
 
 PACKAGES = [
-    'reverification',
-    'reverification.xblock',
+    'edx_reverification_block',
+    'edx_reverification_block.xblock',
 ]
+
 
 def is_requirement(line):
     """
@@ -22,6 +23,7 @@ def is_requirement(line):
         line.startswith('-e') or
         line.startswith('git+')
     )
+
 
 def load_requirements(*requirements_paths):
     """
@@ -55,7 +57,7 @@ setup(
     tests_require=load_requirements('requirements/test.txt'),
     entry_points={
         'xblock.v1': [
-            'reverification = reverification.xblock.reverification_block:ReverificationBlock',
+            'edx-reverification-block = edx_reverification_block.xblock.reverification_block:ReverificationBlock',
         ]
     },
 )
