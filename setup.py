@@ -56,6 +56,9 @@ setup(
     entry_points={
         'xblock.v1': [
             'reverification = reverification.xblock.reverification_block:ReverificationBlock',
-        ]
+        ],
+        'xblock.service': [
+            'verification = reverification.service:VerificationService'
+        ],
     },
 )
