@@ -1,3 +1,4 @@
 -r base.txt
+-e .
 
 git+https://github.com/edx/xblock-sdk.git@598dedcdc601a07a6f466ce1a4452732b590e213#egg=xblock-sdk

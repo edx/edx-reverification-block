@@ -4,8 +4,8 @@
 from .base import *     # pylint:disable=W0614,W0401
 
 TEST_APPS = (
-    'reverification',
-    'reverification.xblock',
+    'edx_reverification_block',
+    'edx_reverification_block.xblock',
 )
 
 # Configure nose
