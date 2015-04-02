@@ -4,6 +4,8 @@ import pkg_resources
 from xblock.core import XBlock
 from xblock.fragment import Fragment
 
+CHECKPOINT_NAME = "midterm"
+
 
 def load(path):
     """Load a resource from the package. """
@@ -20,12 +22,23 @@ class ReverificationBlock(XBlock):
 
     def student_view(self, context=None):
         """Student view to render the re-verification link
-            This will render the url to display in lms.
-        """
-        # TODO: Need to change the hard coded url
 
-        anchor_str = "<a href='/verify_student/reverify/{course_id}/midterm/'>Reverify</a>"
-        return Fragment(unicode(anchor_str).format(self=self, course_id=self.get_course_id()))
+        This will render the url to display in lms along with marketing text.
+
+        """
+        course_id = self.get_course_id()
+        item_id = unicode(self.scope_ids.usage_id)
+        checkpoint_name = CHECKPOINT_NAME
+        # TODO: How to get the org from the xmodule_runtime??
+        org = u"MIT"
+        html_str = pkg_resources.resource_string(__name__, "static/html/reverification.html")
+        frag = Fragment(unicode(html_str).format(
+            course_id=course_id,
+            checkpoint_name=checkpoint_name,
+            item_id=item_id,
+            org=org
+        ))
+        return frag
 
     @staticmethod
     def workbench_scenarios():
