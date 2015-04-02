@@ -4,7 +4,7 @@ import pkg_resources
 from xblock.core import XBlock
 from xblock.fragment import Fragment
 
-CHECKPOINT_NAME = "midterm"
+CHECKPOINT_NAME = "final"
 
 
 def load(path):
@@ -13,6 +13,7 @@ def load(path):
     return data.decode("utf8")
 
 
+@XBlock.needs("reverification")
 class ReverificationBlock(XBlock):
     """An XBlock for in-course reverification. """
 
@@ -29,6 +30,20 @@ class ReverificationBlock(XBlock):
         course_id = self.get_course_id()
         item_id = unicode(self.scope_ids.usage_id)
         checkpoint_name = CHECKPOINT_NAME
+        # TODO: How to get the user object from runtime to check the status of that user in the given checkpoint?
+        verification_status = self.runtime.service(self, "reverification").get_status(
+            course_id=course_id,
+            checkpoint_name=checkpoint_name
+        )
+        if verification_status:
+            # TODO: What message will be displayed to user if it is already has any status?
+            frag = Fragment(unicode(verification_status))
+            return frag
+        self.runtime.service(self, "reverification").start_verification(
+            course_id=course_id,
+            checkpoint_name=checkpoint_name,
+            item_id=item_id
+        )
         # TODO: How to get the org from the xmodule_runtime??
         org = u"MIT"
         html_str = pkg_resources.resource_string(__name__, "static/html/reverification.html")
