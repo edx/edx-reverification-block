@@ -36,9 +36,9 @@ class ReverificationBlock(XBlock):
             course_id=course_id,
             checkpoint_name=checkpoint_name
         )
-        if verification_status and 0:
+        if verification_status:
             # TODO: What message will be displayed to user if it is already has any status?
-            frag = Fragment(unicode(reverification_link))
+            frag = Fragment(unicode(verification_status))
             return frag
         reverification_link = self.runtime.service(self, "reverification").start_verification(
             course_id=course_id,
