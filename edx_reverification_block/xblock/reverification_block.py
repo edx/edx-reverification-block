@@ -75,4 +75,4 @@ class ReverificationBlock(XBlock):
         """
         # This is not the real way getting the org should work, but this is a
         # temporary expediency for LMS integration
-        return self.xmodule_runtime.course_id.org if hasattr((self, "xmodule_runtime")) else "edX ORG"
+        return self.xmodule_runtime.course_id.org if hasattr(self, "xmodule_runtime") else "edX ORG"
