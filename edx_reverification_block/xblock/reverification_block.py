@@ -2,9 +2,10 @@
 
 import pkg_resources
 from xblock.core import XBlock
+from xblock.fields import Scope, String
 from xblock.fragment import Fragment
 
-CHECKPOINT_NAME = "final"
+CHECKPOINT_NAME = "Final Exam"
 
 
 def load(path):
@@ -13,9 +14,16 @@ def load(path):
     return data.decode("utf8")
 
 
-@XBlock.needs("reverification")
+@XBlock.wants("reverification")
 class ReverificationBlock(XBlock):
     """An XBlock for in-course reverification. """
+
+    # Fields
+    checkpoint_name = String(
+        scope=Scope.content,
+        default=CHECKPOINT_NAME,
+        help="Checkpoint Name"
+    )
 
     @property
     def course_id(self):
@@ -31,6 +39,9 @@ class ReverificationBlock(XBlock):
         item_id = unicode(self.scope_ids.usage_id)
         checkpoint_name = CHECKPOINT_NAME
         user_id = unicode(self.scope_ids.user_id)
+        if not self.runtime.service(self, "reverification"):
+            return Fragment(unicode("No service defined"))
+        is_published = self.runtime.service(self, "reverification").is_published(self)
         verification_status = self.runtime.service(self, "reverification").get_status(
             user_id=user_id,
             course_id=course_id,
@@ -49,9 +60,33 @@ class ReverificationBlock(XBlock):
         html_str = pkg_resources.resource_string(__name__, "static/html/reverification.html")
         frag = Fragment(unicode(html_str).format(
             reverification_link=reverification_link,
-            org=org
+            org=org,
+            is_published=is_published
         ))
         return frag
+
+    def studio_view(self, context):
+        """
+        Create a fragment used to display the edit view in the Studio.
+        """
+
+        html_str = pkg_resources.resource_string(__name__, "static/html/checkpoint_edit.html")
+        frag = Fragment(unicode(html_str).format(
+            checkpoint_name=self.checkpoint_name
+        ))
+        js_str = pkg_resources.resource_string(__name__, "static/js/checkpoint_edit.js")
+        frag.add_javascript(unicode(js_str))
+        frag.initialize_js('CheckpointEditBlock')
+        return frag
+
+    @XBlock.json_handler
+    def studio_submit(self, data, suffix=''):
+        """
+        Called when submitting the form in Studio.
+        """
+        self.checkpoint_name = data.get('checkpoint_name')
+
+        return {'result': 'success'}
 
     @staticmethod
     def workbench_scenarios():
