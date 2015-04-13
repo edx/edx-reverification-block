@@ -66,7 +66,7 @@ class ReverificationBlock(XBlock):
         This will render the url to display in lms along with marketing text.
 
         """
-        if not self.in_studio_preview:
+        if self.in_studio_preview:
             return self.get_studio_preview()
         course_id = self.get_course_id()
         item_id = unicode(self.scope_ids.usage_id)
