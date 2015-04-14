@@ -5,7 +5,7 @@ from xblock.core import XBlock
 from xblock.fields import Scope, String, Boolean
 from xblock.fragment import Fragment
 
-CHECKPOINT_NAME = "Final Exam"
+CHECKPOINT_NAME = "Final"
 
 
 def load(path):
