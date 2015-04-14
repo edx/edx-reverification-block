@@ -66,11 +66,14 @@ class ReverificationBlock(XBlock):
         This will render the url to display in lms along with marketing text.
 
         """
-        if self.in_studio_preview:
+
+        # Assume that if service is not available then it is
+        # in studio_preview because service are defined in LMS
+        if not self.runtime.service(self, "reverification"):
             return self.get_studio_preview()
         course_id = self.get_course_id()
         item_id = unicode(self.scope_ids.usage_id)
-        checkpoint_name = CHECKPOINT_NAME
+        checkpoint_name = self.checkpoint_name
         user_id = unicode(self.scope_ids.user_id)
 
         if not self.runtime.service(self, "reverification"):
