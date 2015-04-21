@@ -1,18 +1,14 @@
 <div class="wrapper-comp-settings is-active editor-with-buttons" id="settings-tab">
   <ul class="list-input settings-list">
+    {% for field, value, validator in fields %}
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="related_assessment">Checkpoint Name</label>
-        <input class="input setting-input" name="related_assessment" id="related_assessment" value="{related_assessment}" type="text" />
+        <label class="label setting-label" for="{{ field.name }}_input">{{ field.display_name }}</label>
+        <input class="input setting-input" name="{{ field.name }}" id="{{ field.name }}_input" value="{{ field.value }}" data-validator="{{ validator }}" type="text" />
       </div>
-      <span class="tip setting-help">Example: Final Exam</span>
+      <span class="tip setting-help">{{ field.help }}</span>
     </li>
-    <li class="field comp-setting-entry is-set">
-      <div class="wrapper-comp-setting">
-        <label class="label setting-label" for="attempts">Re-Verification Attempts</label>
-        <input class="input setting-input" name="attempts" id="attempts" value="{attempts}" type="text" />
-      </div>
-    </li>
+    {% endfor %}
   </ul>
   <div class="xblock-actions">
     <ul>

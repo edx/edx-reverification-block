@@ -1,10 +1,16 @@
 """An XBlock for in-course reverification. """
 
+import logging
+
+from django.template import Context, Template
+
 import pkg_resources
 from xblock.core import XBlock
 from xblock.fields import Scope, String, Boolean, Integer
 from xblock.fragment import Fragment
 
+
+log = logging.getLogger(__name__)
 CHECKPOINT_NAME = "Assessment 1"
 
 
@@ -27,16 +33,19 @@ class ReverificationBlock(XBlock):
     )
 
     attempts = Integer(
-        display_name="Maximum attempts",
+        display_name="Verification Attempts",
         default=0,
         scope=Scope.settings,
-        help="Maximum number of attempts for a reverification.",
+        help="This is the number of attempts that students are permitted to "
+             "get a valid re-verification."
     )
 
     related_assessment = String(
+        display_name="Related Assessment",
         scope=Scope.content,
         default=CHECKPOINT_NAME,
-        help="Checkpoint Name"
+        help="This name will allow you to distinguish distinct checkpoints "
+             "that show up in the reporting about student verification status."
     )
 
     is_configured = Boolean(
@@ -115,19 +124,41 @@ class ReverificationBlock(XBlock):
         return frag
 
     def studio_view(self, context):
-        """ Create a fragment used to display the edit view in the Studio.
-
         """
+        Create a fragment used to display the edit view in the Studio.
+        """
+        try:
+            cls = type(self)
 
-        html_str = pkg_resources.resource_string(__name__, "static/html/checkpoint_edit.html")
-        frag = Fragment(unicode(html_str).format(
-            related_assessment=self.related_assessment,
-            attempts=self.attempts
-        ))
-        js_str = pkg_resources.resource_string(__name__, "static/js/checkpoint_edit.js")
-        frag.add_javascript(unicode(js_str))
-        frag.initialize_js('CheckpointEditBlock')
-        return frag
+            def none_to_empty(data):
+                """
+                Return empty string if data is None else return data.
+                """
+                return data if data is not None else ''
+
+            edit_fields = (
+                (field, none_to_empty(getattr(self, field.name)), validator)
+                for field, validator in (
+                    (cls.related_assessment, 'string'),
+                    (cls.attempts, 'number'))
+            )
+
+            context = {
+                'fields': edit_fields
+            }
+            fragment = Fragment()
+            fragment.add_content(
+                render_template(
+                    'static/html/checkpoint_edit.html',
+                    context
+                )
+            )
+            fragment.add_javascript(_resource("static/js/checkpoint_edit.js"))
+            fragment.initialize_js('CheckpointEditBlock')
+            return fragment
+        except:  # pragma: NO COVER
+            log.error("Error creating fragment for studio edit view", exc_info=True)
+            raise
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
@@ -172,3 +203,31 @@ class ReverificationBlock(XBlock):
         html_str = pkg_resources.resource_string(__name__, "static/html/studio_preview.html")
         frag = Fragment(unicode(html_str).format(message=message))
         return frag
+
+
+def _resource(path):  # pragma: NO COVER
+    """
+    Handy helper for getting resources from our kit.
+    """
+    data = pkg_resources.resource_string(__name__, path)
+    return data.decode("utf8")
+
+
+def load_resource(resource_path):  # pragma: NO COVER
+    """
+    Gets the content of a resource
+    """
+    resource_content = pkg_resources.resource_string(__name__, resource_path)
+    return unicode(resource_content)
+
+
+def render_template(template_path, context=None):  # pragma: NO COVER
+    """
+    Evaluate a template by resource path, applying the provided context.
+    """
+    if context is None:
+        context = {}
+
+    template_str = load_resource(template_path)
+    template = Template(template_str)
+    return template.render(Context(context))
