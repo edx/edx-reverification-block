@@ -2,10 +2,10 @@
 
 import pkg_resources
 from xblock.core import XBlock
-from xblock.fields import Scope, String, Boolean
+from xblock.fields import Scope, String, Boolean, Integer
 from xblock.fragment import Fragment
 
-CHECKPOINT_NAME = "Final"
+CHECKPOINT_NAME = "Assessment 1"
 
 
 def load(path):
@@ -19,7 +19,21 @@ class ReverificationBlock(XBlock):
     """An XBlock for in-course reverification. """
 
     # Fields
-    checkpoint_name = String(
+    display_name = String(
+        scope=Scope.settings,
+        default='Re-Verification Checkpoint',
+        help="This name appears in the horizontal navigation at the top of "
+             "the page."
+    )
+
+    attempts = Integer(
+        display_name="Maximum attempts",
+        default=0,
+        scope=Scope.settings,
+        help="Maximum number of attempts for a reverification.",
+    )
+
+    related_assessment = String(
         scope=Scope.content,
         default=CHECKPOINT_NAME,
         help="Checkpoint Name"
@@ -28,7 +42,7 @@ class ReverificationBlock(XBlock):
     is_configured = Boolean(
         scope=Scope.content,
         default=False,
-        help="Is re-verification xblocked configured or not"
+        help="Reverification XBlock is configured or not."
     )
 
     @property
@@ -73,7 +87,7 @@ class ReverificationBlock(XBlock):
             return self.get_studio_preview()
         course_id = self.get_course_id()
         item_id = unicode(self.scope_ids.usage_id)
-        checkpoint_name = self.checkpoint_name
+        related_assessment = self.related_assessment
         user_id = unicode(self.scope_ids.user_id)
 
         if not self.runtime.service(self, "reverification"):
@@ -81,7 +95,7 @@ class ReverificationBlock(XBlock):
         verification_status = self.runtime.service(self, "reverification").get_status(
             user_id=user_id,
             course_id=course_id,
-            checkpoint_name=checkpoint_name
+            related_assessment=related_assessment
         )
         if verification_status:
             # TODO: What message will be displayed to user if it is already has any status?
@@ -89,7 +103,7 @@ class ReverificationBlock(XBlock):
             return frag
         reverification_link = self.runtime.service(self, "reverification").start_verification(
             course_id=course_id,
-            checkpoint_name=checkpoint_name,
+            related_assessment=related_assessment,
             item_id=item_id
         )
         org = self.get_org()
@@ -107,7 +121,8 @@ class ReverificationBlock(XBlock):
 
         html_str = pkg_resources.resource_string(__name__, "static/html/checkpoint_edit.html")
         frag = Fragment(unicode(html_str).format(
-            checkpoint_name=self.checkpoint_name
+            related_assessment=self.related_assessment,
+            attempts=self.attempts
         ))
         js_str = pkg_resources.resource_string(__name__, "static/js/checkpoint_edit.js")
         frag.add_javascript(unicode(js_str))
@@ -119,7 +134,8 @@ class ReverificationBlock(XBlock):
         """
         Called when submitting the form in Studio.
         """
-        self.checkpoint_name = data.get('checkpoint_name')
+        self.related_assessment = data.get('related_assessment')
+        self.attempts = data.get('attempts')
         self.is_configured = True
 
         return {'result': 'success'}
@@ -152,7 +168,7 @@ class ReverificationBlock(XBlock):
         if not self.is_configured:
             message = "You need to configure the xBlock before publishing it."
         else:
-            message = "The re-verification block name is \"{}\"".format(unicode(self.checkpoint_name))
+            message = "The re-verification block name is \"{}\"".format(unicode(self.related_assessment))
         html_str = pkg_resources.resource_string(__name__, "static/html/studio_preview.html")
         frag = Fragment(unicode(html_str).format(message=message))
         return frag
