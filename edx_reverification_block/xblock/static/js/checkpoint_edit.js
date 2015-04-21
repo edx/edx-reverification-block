@@ -2,7 +2,8 @@ function CheckpointEditBlock(runtime, element) {
   $(element).find('.save-button').bind('click', function() {
     var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
     var data = {
-      checkpoint_name: $(element).find('input[name=checkpoint_name]').val()
+      related_assessment: $(element).find('input[name=related_assessment]').val(),
+      attempts: $(element).find('input[name=attempts]').val()
     };
     runtime.notify('save', {state: 'start'});
     $.post(handlerUrl, JSON.stringify(data)).done(function(response) {
