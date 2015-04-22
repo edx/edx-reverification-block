@@ -196,13 +196,21 @@ class ReverificationBlock(XBlock):
         return self.xmodule_runtime.course_id.org if hasattr(self, "xmodule_runtime") else "edX ORG"
 
     def get_studio_preview(self):
-        if not self.is_configured:
-            message = "You need to configure the xBlock before publishing it."
-        else:
-            message = "The re-verification block name is \"{}\"".format(unicode(self.related_assessment))
-        html_str = pkg_resources.resource_string(__name__, "static/html/studio_preview.html")
-        frag = Fragment(unicode(html_str).format(message=message))
-        return frag
+        """ Return rendered studio view """
+        context = {
+            "is_configured": self.is_configured,
+            "view_container_link": "/container/" + unicode(self.scope_ids.usage_id)
+        }
+
+        fragment = Fragment()
+        fragment.add_content(
+            render_template(
+                'static/html/studio_preview.html',
+                context
+            )
+        )
+
+        return fragment
 
 
 def _resource(path):  # pragma: NO COVER

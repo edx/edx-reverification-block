@@ -25,17 +25,16 @@ class TestReverificationBlock(XBlockHandlerTestCaseMixin, TestCase):
         # message to configure it
         xblock_fragment = self.runtime.render(xblock, "student_view")
         self.assertTrue('edx-reverification-block' in xblock_fragment.body_html())
-        self.assertTrue('You need to configure the xBlock before publishing it' in xblock_fragment.body_html())
+        self.assertTrue('This checkpoint is not associated with an assessment yet.' in xblock_fragment.body_html())
 
         # Now set 'related_assessment' and 'attempts' fields and check that
-        # values of these fields appear in rendered response and also test
-        # that configuration message does not appear
+        # values of these fields set correctly and also test that configuration
+        # message does not appear
         data = json.dumps({'related_assessment': 'FinalExam', 'attempts': 5})
         resp = self.request(xblock, 'studio_submit', data, response_format='json')
         self.assertTrue(resp.get('result'))
         xblock_fragment = self.runtime.render(xblock, "student_view")
-        self.assertTrue('FinalExam' in xblock_fragment.body_html())
-        self.assertFalse('You need to configure the xBlock before publishing it' in xblock_fragment.body_html())
+        self.assertFalse('This checkpoint is not associated with an assessment yet.' in xblock_fragment.body_html())
 
         # Configure a dummy "ReverificationService" with dummy responses
         DummyReverificationService = Mock()
