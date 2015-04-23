@@ -104,7 +104,7 @@ class ReverificationBlock(XBlock):
         verification_status = self.runtime.service(self, "reverification").get_status(
             user_id=user_id,
             course_id=course_id,
-            related_assessment=related_assessment
+            checkpoint_name=related_assessment
         )
         if verification_status:
             # TODO: What message will be displayed to user if it is already has any status?
@@ -112,15 +112,20 @@ class ReverificationBlock(XBlock):
             return frag
         reverification_link = self.runtime.service(self, "reverification").start_verification(
             course_id=course_id,
-            related_assessment=related_assessment,
+            checkpoint_name=related_assessment,
             item_id=item_id
         )
         org = self.get_org()
         html_str = pkg_resources.resource_string(__name__, "static/html/reverification.html")
         frag = Fragment(unicode(html_str).format(
             reverification_link=reverification_link,
-            org=org
+            checkpoint=self.related_assessment,
+            course_id=unicode(course_id),
+            user_id=user_id
         ))
+
+        frag.add_javascript(_resource("static/js/skip_reverification.js"))
+        frag.initialize_js('SkipReverifcation')
         return frag
 
     def studio_view(self, context):
@@ -179,6 +184,22 @@ class ReverificationBlock(XBlock):
                 load("static/xml/reverification_block_example.xml")
             ),
         ]
+
+    @XBlock.json_handler
+    def skip_verification(self, data, suffix=''):
+        """
+        Called when submitting the form in Studio for skipping verification.
+        """
+        checkpoint = data.get("checkpoint")
+        user_id = data.get("user_id")
+        course_id = data.get("course_id")
+        self.runtime.service(self, "reverification").skip_verification(
+            checkpoint,
+            user_id,
+            course_id
+        )
+
+        return {'result': 'success'}
 
     def get_course_id(self):
         """ Return the course_id

@@ -1,5 +1,40 @@
 <div>
     <a href="{reverification_link}">Re-Verify Now</a>
     <br />
-    <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. {org} curabitur venenatis in odio id tincidunt. Etiam augue nunc, mollis eget finibus laoreet, congue id sem.</span>
+    <span>
+        To qualify to receive credit, you need to complete all re-verifications in the course.
+        if you do not want to re-verify, you can <a href="#" id="skip">skip and opt out of credit.</a>
+    </span>
 </div>
+        <section id="skip-reverification-modal" class="modal unenroll-modal" aria-hidden="true" aria-hidden="false"
+         style="position: absolute; opacity: 1; z-index: 11000; left: 50%; margin-left: -249px;
+                top: 120px; display: none;"
+        >
+  <div class="inner-wrapper" role="dialog" aria-labelledby="skip-settings-title">
+     <p><b>Are you sure you want to skip?</b></p>
+      <p>To qualify to receive credit, you need to complete all re-verifications in the course. If you skip, you can still work toward a Verified Certificate.</p>
+    <button class="close-modal" id="close-modal">
+      <i class="icon fa fa-remove"></i>
+      <span class="sr">
+        Close
+      </span>
+    </button>
+      <button id="opt-out">
+        <i class="icon fa fa-remove"></i>
+        <span>
+            Skip and opt-out of credit
+        </span>
+      </button>
+
+      <button id="opt-out-cancel">
+        <i class="icon fa fa-remove"></i>
+        <span>
+            Cancel
+        </span>
+      </button>
+  <input type="hidden" name="checkpoint" id="related_assessment_input" value="{checkpoint}" />
+  <input type="hidden" name="user_id" id="user_id_input" value="{user_id}" />
+  <input type="hidden" name="course_id" id="course_id_input" value="{course_id}" />
+  </div>
+</section>
+<div id="lean_overlay"></div>

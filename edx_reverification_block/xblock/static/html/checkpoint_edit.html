@@ -6,7 +6,7 @@
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="{{ field.name }}_input">{{ field.display_name }}</label>
-        <input class="input setting-input" name="{{ field.name }}" id="{{ field.name }}_input" value="{{ value }}" data-validator="{{ validator }}" type="text" />
+        <input required class="input setting-input" name="{{ field.name }}" id="{{ field.name }}_input" value="{{ value }}" data-validator="{{ validator }}" type="text" />
       </div>
       <span class="tip setting-help">{{ field.help }}</span>
     </li>
