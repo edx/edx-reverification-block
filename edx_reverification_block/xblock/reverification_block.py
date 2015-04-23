@@ -104,7 +104,7 @@ class ReverificationBlock(XBlock):
         verification_status = self.runtime.service(self, "reverification").get_status(
             user_id=user_id,
             course_id=course_id,
-            checkpoint_name=related_assessment
+            related_assessment=related_assessment
         )
         if verification_status:
             # TODO: What message will be displayed to user if it is already has any status?
@@ -112,7 +112,7 @@ class ReverificationBlock(XBlock):
             return frag
         reverification_link = self.runtime.service(self, "reverification").start_verification(
             course_id=course_id,
-            checkpoint_name=related_assessment,
+            related_assessment=related_assessment,
             item_id=item_id
         )
         org = self.get_org()
