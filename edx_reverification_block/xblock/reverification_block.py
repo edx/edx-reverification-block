@@ -14,12 +14,6 @@ log = logging.getLogger(__name__)
 CHECKPOINT_NAME = "Assessment 1"
 
 
-def load(path):
-    """Load a resource from the package. """
-    data = pkg_resources.resource_string(__name__, path)
-    return data.decode("utf8")
-
-
 @XBlock.wants("reverification")
 class ReverificationBlock(XBlock):
     """An XBlock for in-course reverification. """
@@ -89,44 +83,46 @@ class ReverificationBlock(XBlock):
         This will render the url to display in lms along with marketing text.
 
         """
-
         # Assume that if service is not available then it is
         # in studio_preview because service are defined in LMS
         if not self.runtime.service(self, "reverification"):
             return self.get_studio_preview()
+
         course_id = self.get_course_id()
         item_id = unicode(self.scope_ids.usage_id)
         related_assessment = self.related_assessment
         user_id = unicode(self.scope_ids.user_id)
+        fragment = Fragment()
 
-        if not self.runtime.service(self, "reverification"):
-            return Fragment(unicode("No service defined in this runtime"))
         verification_status = self.runtime.service(self, "reverification").get_status(
             user_id=user_id,
             course_id=course_id,
             related_assessment=related_assessment
         )
+
         if verification_status:
             # TODO: What message will be displayed to user if it is already has any status?
-            frag = Fragment(unicode(verification_status))
-            return frag
-        reverification_link = self.runtime.service(self, "reverification").start_verification(
-            course_id=course_id,
-            related_assessment=related_assessment,
-            item_id=item_id
-        )
-        org = self.get_org()
-        html_str = pkg_resources.resource_string(__name__, "static/html/reverification.html")
-        frag = Fragment(unicode(html_str).format(
-            reverification_link=reverification_link,
-            checkpoint=self.related_assessment,
-            course_id=unicode(course_id),
-            user_id=user_id
-        ))
+            fragment.add_content(unicode(verification_status))
+        else:
+            reverification_link = self.runtime.service(self, "reverification").start_verification(
+                course_id=course_id,
+                related_assessment=related_assessment,
+                item_id=item_id
+            )
+            org = self.get_org()
+            html = self._render_template(
+                "static/html/reverification.html",
+                {
+                    'reverification_link': reverification_link,
+                    'org': org
+                }
+            )
+            fragment.add_content(html)
+            fragment.add_javascript(self._resource("static/js/skip_reverification.js"))
+            fragment.initialize_js('SkipReverifcation')
 
-        frag.add_javascript(_resource("static/js/skip_reverification.js"))
-        frag.initialize_js('SkipReverifcation')
-        return frag
+        fragment.add_css(self._resource("static/reverification.min.css"))
+        return fragment
 
     def studio_view(self, context):
         """
@@ -153,12 +149,12 @@ class ReverificationBlock(XBlock):
             }
             fragment = Fragment()
             fragment.add_content(
-                render_template(
+                self._render_template(
                     'static/html/checkpoint_edit.html',
                     context
                 )
             )
-            fragment.add_javascript(_resource("static/js/checkpoint_edit.js"))
+            fragment.add_javascript(self._resource("static/js/checkpoint_edit.js"))
             fragment.initialize_js('CheckpointEditBlock')
             return fragment
         except:  # pragma: NO COVER
@@ -181,7 +177,7 @@ class ReverificationBlock(XBlock):
         return [
             (
                 "Reverification Block",
-                load("static/xml/reverification_block_example.xml")
+                ReverificationBlock._resource("static/xml/reverification_block_example.xml")
             ),
         ]
 
@@ -202,16 +198,13 @@ class ReverificationBlock(XBlock):
         return {'result': 'success'}
 
     def get_course_id(self):
-        """ Return the course_id
-        """
+        """ Return the course_id """
         # This is not the real way course_ids should work, but this is a
         # temporary expediency for LMS integration
         return self.course_id if hasattr(self, "xmodule_runtime") else "edX/Enchantment_101/April_1"
 
     def get_org(self):
-        """ Return the org
-
-        """
+        """ Return the org """
         # This is not the real way getting the org should work, but this is a
         # temporary expediency for LMS integration
         return self.xmodule_runtime.course_id.org if hasattr(self, "xmodule_runtime") else "edX ORG"
@@ -225,7 +218,7 @@ class ReverificationBlock(XBlock):
 
         fragment = Fragment()
         fragment.add_content(
-            render_template(
+            self._render_template(
                 'static/html/studio_preview.html',
                 context
             )
@@ -233,30 +226,19 @@ class ReverificationBlock(XBlock):
 
         return fragment
 
+    @staticmethod
+    def _resource(path):
+        """
+        Handy helper for getting resources from our kit.
+        """
+        data = pkg_resources.resource_string(__name__, path)
+        return data.decode("utf8")
 
-def _resource(path):  # pragma: NO COVER
-    """
-    Handy helper for getting resources from our kit.
-    """
-    data = pkg_resources.resource_string(__name__, path)
-    return data.decode("utf8")
-
-
-def load_resource(resource_path):  # pragma: NO COVER
-    """
-    Gets the content of a resource
-    """
-    resource_content = pkg_resources.resource_string(__name__, resource_path)
-    return unicode(resource_content)
-
-
-def render_template(template_path, context=None):  # pragma: NO COVER
-    """
-    Evaluate a template by resource path, applying the provided context.
-    """
-    if context is None:
-        context = {}
-
-    template_str = load_resource(template_path)
-    template = Template(template_str)
-    return template.render(Context(context))
+    @staticmethod
+    def _render_template(template_path, context):
+        """
+        Evaluate a template by resource path, applying the provided context.
+        """
+        template_str = ReverificationBlock._resource(template_path)
+        template = Template(template_str)
+        return template.render(Context(context))
