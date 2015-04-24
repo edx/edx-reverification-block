@@ -1,0 +1,4 @@
+include requirements/*.txt
+recursive-include edx_reverification_block/xblock/static *
+include LICENSE
+include README.rst
