@@ -1,4 +1,4 @@
-git+https://github.com/edx/xblock-sdk.git@598dedcdc601a07a6f466ce1a4452732b590e213#egg=xblock-sdk
+git+https://github.com/edx/xblock-sdk.git@c07c867d5b3a5eb8a4a241b218083fb1d3416fc9#egg=xblock-sdk
 
 coverage==3.7.1
 ddt==0.8.0

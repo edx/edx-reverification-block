@@ -50,7 +50,21 @@ class ReverificationBlock(XBlock):
 
     @property
     def course_id(self):
-        return unicode(self.xmodule_runtime.course_id)  # pylint:disable=E1101
+        """Retrieve the course ID.
+
+        Returns:
+            CourseKey
+
+        """
+        # Note: this relies on an unsupported API (xmodule_runtime),
+        # which is currently the only way to retrieve the course ID
+        # from the LMS.  If the course ID is not available,
+        # we use a default course ID for testing (usually in workbench).
+        return (
+            unicode(self.xmodule_runtime.course_id)
+            if hasattr(self, "xmodule_runtime")
+            else "edX/Enchantment_101/April_1"
+        )
 
     @property
     def in_studio_preview(self):
@@ -88,7 +102,7 @@ class ReverificationBlock(XBlock):
         if not self.runtime.service(self, "reverification"):
             return self.get_studio_preview()
 
-        course_id = self.get_course_id()
+        course_id = self.course_id
         item_id = unicode(self.scope_ids.usage_id)
         related_assessment = self.related_assessment
         user_id = unicode(self.scope_ids.user_id)
@@ -109,12 +123,10 @@ class ReverificationBlock(XBlock):
                 related_assessment=related_assessment,
                 item_id=item_id
             )
-            org = self.get_org()
             html = self._render_template(
                 "static/html/reverification.html",
                 {
                     'reverification_link': reverification_link,
-                    'org': org
                 }
             )
             fragment.add_content(html)
@@ -196,18 +208,6 @@ class ReverificationBlock(XBlock):
         )
 
         return {'result': 'success'}
-
-    def get_course_id(self):
-        """ Return the course_id """
-        # This is not the real way course_ids should work, but this is a
-        # temporary expediency for LMS integration
-        return self.course_id if hasattr(self, "xmodule_runtime") else "edX/Enchantment_101/April_1"
-
-    def get_org(self):
-        """ Return the org """
-        # This is not the real way getting the org should work, but this is a
-        # temporary expediency for LMS integration
-        return self.xmodule_runtime.course_id.org if hasattr(self, "xmodule_runtime") else "edX ORG"
 
     def get_studio_preview(self):
         """ Return rendered studio view """
