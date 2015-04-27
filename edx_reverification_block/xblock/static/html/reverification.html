@@ -1,40 +1,32 @@
-<div>
-    <a href="{{ reverification_link }}">Re-Verify Now</a>
-    <br />
-    <span>
+{% load i18n %}
+<div class="reverify-xblock">
+  <div class="reverify-now-wrapper">
+    <div class="reverify-now-content">
+      <div class="reverify-now-title">{% trans "Before you continue, you need to re-verify" %}</div>
+      <div class="reverify-skip-msg">
+        {% blocktrans with start_link='<a href="#" class="reverify-skip-link">' end_link="</a>" %}
         To qualify to receive credit, you need to complete all re-verifications in the course.
-        if you do not want to re-verify, you can <a href="#" id="skip">skip and opt out of credit.</a>
-    </span>
-</div>
-        <section id="skip-reverification-modal" class="modal unenroll-modal" aria-hidden="true" aria-hidden="false"
-         style="position: absolute; opacity: 1; z-index: 11000; left: 50%; margin-left: -249px;
-                top: 120px; display: none;"
-        >
-  <div class="inner-wrapper" role="dialog" aria-labelledby="skip-settings-title">
-     <p><b>Are you sure you want to skip?</b></p>
-      <p>To qualify to receive credit, you need to complete all re-verifications in the course. If you skip, you can still work toward a Verified Certificate.</p>
-    <button class="close-modal" id="close-modal">
-      <i class="icon fa fa-remove"></i>
-      <span class="sr">
-        Close
-      </span>
-    </button>
-      <button id="opt-out">
-        <i class="icon fa fa-remove"></i>
-        <span>
-            Skip and opt-out of credit
-        </span>
-      </button>
-
-      <button id="opt-out-cancel">
-        <i class="icon fa fa-remove"></i>
-        <span>
-            Cancel
-        </span>
-      </button>
-  <input type="hidden" name="checkpoint" id="related_assessment_input" value="{checkpoint}" />
-  <input type="hidden" name="user_id" id="user_id_input" value="{user_id}" />
-  <input type="hidden" name="course_id" id="course_id_input" value="{course_id}" />
+        If you do not want to re-verify, you can {{ start_link }}skip and opt out of credit.{{ end_link }}
+        {% endblocktrans %}
+      </div>
+    </div>
+    <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">Re-Verify Now</button>
+    <div class="reverify-clear-line"></div>
   </div>
-</section>
-<div id="lean_overlay"></div>
+
+  <div class="reverify-skip-confirm-wrapper hidden">
+    <div class="reverify-skip-confirm">
+
+      <div class="reverify-skip-confirm-title">{% trans "Are you sure you want to skip reverification?" %}</div>
+
+      <div class="reverify-skip-confirm-content">{% trans "To qualify to receive credit, you need to complete all re-verifications in the course.  If you skip, you can still work towards a Verified Certificate." %}</div>
+
+      <div class="reverify-skip-actions">
+        <button class="reverify-skip-cancel-button action action-secondary">{% trans "Cancel" %}</button>
+        <button class="reverify-skip-confirm-button action action-primary">{% trans "Skip and opt-out of credit" %}</button>
+      </div>
+
+      <div class="reverify-clear-line" />
+    </div>
+  </div>
+</div>

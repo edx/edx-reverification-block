@@ -76,3 +76,13 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         # Check that the status is displayed correctly
         xblock_fragment = self.runtime.render(xblock, "student_view")
         self.assertIn(status, xblock_fragment.body_html())
+
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_skip_reverification(self, xblock):
+        # Skip verification
+        response = self.request(xblock, "skip_verification", json.dumps(""), response_format="json")
+        self.assertTrue(response['success'])
+
+        # Reloading the student view, we should see that we've skipped
+        xblock_fragment = self.runtime.render(xblock, "student_view")
+        self.assertIn("skipped", xblock_fragment.body_html())
