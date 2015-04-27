@@ -1,24 +1,26 @@
 {% load i18n %}
 
-{% if not is_configured %}
-<div class="wrapper-xblock-message xblock-validation-messages">
-    <div class="xblock-message validation has-warnings ">
-        <p class="warning">
-            <i class="icon fa fa-warning"></i>
-            {% trans "This checkpoint is not associated with an assessment yet." %} <a class="edit-button action-button" href="#">{% trans "Select an Assessment" %}</a>
-        </p>
+<div class="xblock wrapper-xblock-base-level">
+    {% if not is_configured %}
+    <div class="wrapper-xblock-message xblock-validation-messages">
+        <div class="xblock-message validation has-warnings ">
+            <p class="warning">
+                <i class="icon fa fa-warning"></i>
+                {% trans "This checkpoint is not associated with an assessment yet." %} <a class="edit-button action-button" href="#">{% trans "Select an Assessment" %}</a>
+            </p>
+        </div>
     </div>
-</div>
-{% endif %}
+    {% endif %}
 
-<div class="xblock-header-secondary">
-    <div class="meta-info">{% trans "To preview the checkpoint block, click Preview or View Live in Unit Settings." %}</div>
-    <ul class="actions-list">
-        <li class="action-item action-view">
-            <a class="action-button" href="{{ view_container_link }}">
-                <span class="action-button-text">{% trans "View" %}</span>
-                <i class="icon fa fa-arrow-right"></i>
-            </a>
-        </li>
-    </ul>
+    <div class="xblock-header-secondary">
+        <div class="meta-info">{% trans "To preview the checkpoint block, click Preview or View Live in Unit Settings." %}</div>
+        <ul class="actions-list">
+            <li class="action-item action-view">
+                <a class="action-button" href="{{ view_container_link }}">
+                    <span class="action-button-text">{% trans "View" %}</span>
+                    <i class="icon fa fa-arrow-right"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
