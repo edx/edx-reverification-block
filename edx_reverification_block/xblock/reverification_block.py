@@ -15,6 +15,7 @@ CHECKPOINT_NAME = "Assessment 1"
 
 
 @XBlock.wants("reverification")
+@XBlock.needs("i18n")
 class ReverificationBlock(XBlock):
     """An XBlock for in-course reverification. """
 
@@ -143,9 +144,17 @@ class ReverificationBlock(XBlock):
         # Add JS and CSS resources
         fragment.add_javascript(self._resource("static/js/skip_reverification.js"))
         fragment.initialize_js('SkipReverification')
-        fragment.add_css(self._resource("static/reverification.min.css"))
+        fragment.add_css(self._resource(self.student_view_css_path()))
 
         return fragment
+
+    def student_view_css_path(self):
+        """Retrieve the CSS path for the student view based on the language text-direction. """
+        i18n_service = self.runtime.service(self, 'i18n')
+        if hasattr(i18n_service, 'get_language_bidi') and i18n_service.get_language_bidi():
+            return "static/reverification-rtl.min.css"
+        else:
+            return "static/reverification-ltr.min.css"
 
     def studio_view(self, context):
         """

@@ -14,8 +14,8 @@ try:
 except pkg_resources.DistributionNotFound:
     sys.exit(1)
 EOF
-ORA2_MISSING=$?
-if [[ $ORA2_MISSING -eq 1 ]]; then
+REVERIFICATION_MISSING=$?
+if [[ $REVERIFICATION_MISSING -eq 1 ]]; then
     pip install -q -e .
     echo "Installed."
 else

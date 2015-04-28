@@ -16,8 +16,17 @@ install: install-sass install-python install-test
 test: install-test compile-sass
 	./scripts/test.sh
 
+test-i18n: install-test
+	python manage.py makemessages -l eo
+
+i18n-push: install-python
+	./scripts/i18n-push.sh
+
+i18n-pull: install-python
+	./scripts/i18n-pull.sh
+
 compile-sass: install-sass
-	./node_modules/node-sass/bin/node-sass ./edx_reverification_block/xblock/static/sass/main.scss ./edx_reverification_block/xblock/static/reverification.min.css --output-style compressed
+	./scripts/sass.sh
 
 workbench: install-python compile-sass
 	./scripts/workbench.sh

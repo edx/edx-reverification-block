@@ -1,0 +1,118 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-04-28 11:34-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: edx_reverification_block/xblock/static/html/approved.html:4
+msgid "Your re-verification was successful"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/approved.html:5
+msgid ""
+"Your re-verification for this assessment was successful.  Keep up the good "
+"work!"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/checkpoint_edit.html:18
+msgid "Save"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/checkpoint_edit.html:21
+#: edx_reverification_block/xblock/static/html/reverification.html:28
+msgid "Cancel"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/error.html:4
+msgid "An unexpected error occurred"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/error.html:6
+#, python-format
+msgid ""
+"\n"
+"        An unexpected error occurred during the re-verification process.  "
+"Please contact %(support_email)s for assistance.\n"
+"        "
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:6
+msgid "Your re-verification was not successful"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:8
+msgid "Before you continue, you need to re-verify"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:11
+#, python-format
+msgid ""
+"\n"
+"        To qualify to receive credit, you need to complete all re-"
+"verifications in the course.\n"
+"        If you do not want to re-verify, you can %(start_link)sskip and opt "
+"out of credit.%(end_link)s\n"
+"        "
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:24
+msgid "Are you sure you want to skip reverification?"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:25
+msgid ""
+"To qualify to receive credit, you need to complete all re-verifications in "
+"the course.  If you skip, you can still work towards a Verified Certificate."
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:29
+msgid "Skip and opt-out of credit"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/skipped.html:4
+msgid "You skipped re-verification"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/skipped.html:5
+msgid ""
+"Since you elected to skip re-verification before the assessment, you are no "
+"longer eligible for credit, but you can still work toward a Verified "
+"Certificate."
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/studio_preview.html:8
+msgid "This checkpoint is not associated with an assessment yet."
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/studio_preview.html:8
+msgid "Select an Assessment"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/studio_preview.html:14
+msgid ""
+"To preview the checkpoint block, click Preview or View Live in Unit Settings."
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/submitted.html:4
+msgid "Your re-verification has been submitted"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/submitted.html:5
+msgid ""
+"You may now continue on to the Assessment in the next unit.  We will notify "
+"you once your re-verification has been reviewed.  If it is not successful, "
+"you will need to re-submit it at that time."
+msgstr ""
