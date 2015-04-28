@@ -1,4 +1,4 @@
 -r base.txt
 -e .
 
-git+https://github.com/edx/xblock-sdk.git@ca8f459ed4f991d267b27440cdbd1a07cc878bd3#egg=xblock-sdk
+git+https://github.com/edx/xblock-sdk.git@c07c867d5b3a5eb8a4a241b218083fb1d3416fc9#egg=xblock-sdk

@@ -1,10 +1,10 @@
 """URLs for local development of the reverification block. """
 
-from django.conf import settings
 from django.conf.urls import include, patterns, url
 from django.contrib import admin
 
 import workbench.urls
+import stub_verification.urls
 
 admin.autodiscover()
 
@@ -16,4 +16,7 @@ urlpatterns = patterns(
 
     # Provided by XBlock
     url(r'^/?', include(workbench.urls)),
+
+    # Stub verification service for testing
+    url(r'^stub_verification/', include(stub_verification.urls))
 )
