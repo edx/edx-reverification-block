@@ -1,9 +1,11 @@
 $white: #FFF;
 $red: #D0021B;
 $light-gray: #DDDDDD;
+$dark-gray: #5E5E5E;
 $light-blue: #009FE6;
 $medium-blue: #268dc4;
 $dark-blue: #007aba;
+$green: #1F8819;
 
 @mixin msg-box($highlight-color) {
     padding: 20px 30px;
@@ -61,6 +63,16 @@ $dark-blue: #007aba;
         background-color: transparent;
         color: $white;
     }
+
+    .msg-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: $dark-gray;
+    }
+
+    .msg-content {
+        margin-right: 30px;
+    }
 }
 
 .reverify-now-wrapper {
@@ -69,15 +81,6 @@ $dark-blue: #007aba;
     a {
         text-decoration: none;
         color: $light-blue;
-    }
-
-    .reverify-now-title {
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .reverify-skip-msg {
-        margin-right: 30px;
     }
 
     .reverify-now-button {
@@ -91,14 +94,9 @@ $dark-blue: #007aba;
     background-color: black;
     border-left: 5px solid $red;
 
-
-    .reverify-skip-confirm {
+    .msg-title,
+    .msg-content {
         color: white;
-    }
-
-    .reverify-skip-confirm-title {
-        font-weight: bold;
-        margin-bottom: 10px;
     }
 
     .reverify-skip-actions {
@@ -118,6 +116,23 @@ $dark-blue: #007aba;
         margin-top: 15px;
         width: 100%;
     }
+}
+
+.reverify-skipped {
+    border: 2px solid $light-gray;
+    padding: 20px 30px;
+}
+
+.reverify-submitted {
+    @include msg-box($dark-gray);
+}
+
+.reverify-approved {
+    @include msg-box($green);
+}
+
+.reverify-error {
+    @include msg-box($red);
 }
 
 @media screen and (min-width: 716px) {

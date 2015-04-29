@@ -55,6 +55,20 @@ class ReverificationBlock(XBlock):
         help="ISO-8601 formatted string representing the due date of this related assessment."
     )
 
+    TEMPLATE_FOR_STATUS = {
+        "skipped": "static/html/skipped.html",
+        "submitted": "static/html/submitted.html",
+        "approved": "static/html/approved.html",
+        "denied": "static/html/reverification.html",
+        "error": "static/html/error.html",
+    }
+
+    # TODO: there isn't currently a way to get this from Django settings
+    # in the edx-platform LMS.  We're hard-coding this for now,
+    # but long-term it probably makes sense to move this into a service
+    # provided by the runtime.
+    SUPPORT_EMAIL = "support@edx.org"
+
     @property
     def course_id(self):
         """Retrieve the course ID.
@@ -96,26 +110,41 @@ class ReverificationBlock(XBlock):
             related_assessment=related_assessment
         )
 
+        context = {
+            'status': verification_status,
+            'support_email_link': '<a href="mailto:{email}">{email}</a>'.format(email=self.SUPPORT_EMAIL),
+        }
+
         if verification_status:
-            # TODO: What message will be displayed to user if it is already has any status?
-            fragment.add_content(unicode(verification_status))
+            status_template = self.TEMPLATE_FOR_STATUS.get(verification_status)
+            if status_template is None:
+                log.error(
+                    (
+                        u"Unexpected status %s returned from the verification service "
+                        u"for course %s at checkpoint %s and location %s for user %s"
+                    ),
+                    verification_status, course_id, related_assessment, item_id, user_id
+                )
+                status_template = self.TEMPLATE_FOR_STATUS["error"]
+
+            html = self._render_template(status_template, context)
+            fragment.add_content(html)
+
         else:
             reverification_link = self.runtime.service(self, "reverification").start_verification(
                 course_id=course_id,
                 related_assessment=related_assessment,
                 item_id=item_id
             )
-            html = self._render_template(
-                "static/html/reverification.html",
-                {
-                    'reverification_link': reverification_link,
-                }
-            )
+            context['reverification_link'] = reverification_link
+            html = self._render_template("static/html/reverification.html", context)
             fragment.add_content(html)
-            fragment.add_javascript(self._resource("static/js/skip_reverification.js"))
-            fragment.initialize_js('SkipReverification')
 
+        # Add JS and CSS resources
+        fragment.add_javascript(self._resource("static/js/skip_reverification.js"))
+        fragment.initialize_js('SkipReverification')
         fragment.add_css(self._resource("static/reverification.min.css"))
+
         return fragment
 
     def studio_view(self, context):

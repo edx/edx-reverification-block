@@ -2,8 +2,12 @@
 <div class="reverify-xblock">
   <div class="reverify-now-wrapper">
     <div class="reverify-now-content">
-      <div class="reverify-now-title">{% trans "Before you continue, you need to re-verify" %}</div>
-      <div class="reverify-skip-msg">
+      {% if status == "denied" %}
+      <div class="msg-title">{% trans "Your re-verification was not successful" %}</div>
+      {% else %}
+      <div class="msg-title">{% trans "Before you continue, you need to re-verify" %}</div>
+      {% endif %}
+      <div class="msg-content">
         {% blocktrans with start_link='<a href="#" class="reverify-skip-link">' end_link="</a>" %}
         To qualify to receive credit, you need to complete all re-verifications in the course.
         If you do not want to re-verify, you can {{ start_link }}skip and opt out of credit.{{ end_link }}
@@ -17,9 +21,8 @@
   <div class="reverify-skip-confirm-wrapper hidden">
     <div class="reverify-skip-confirm">
 
-      <div class="reverify-skip-confirm-title">{% trans "Are you sure you want to skip reverification?" %}</div>
-
-      <div class="reverify-skip-confirm-content">{% trans "To qualify to receive credit, you need to complete all re-verifications in the course.  If you skip, you can still work towards a Verified Certificate." %}</div>
+      <div class="msg-title">{% trans "Are you sure you want to skip reverification?" %}</div>
+      <div class="msg-content">{% trans "To qualify to receive credit, you need to complete all re-verifications in the course.  If you skip, you can still work towards a Verified Certificate." %}</div>
 
       <div class="reverify-skip-actions">
         <button class="reverify-skip-cancel-button action action-secondary">{% trans "Cancel" %}</button>

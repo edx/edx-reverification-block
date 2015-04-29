@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="reverify-xblock">
+  <div class="reverify-error">
+    <div class="msg-title">{% trans "An unexpected error occurred" %}</div>
+    <div class="msg-content">
+        {% blocktrans with support_email=support_email_link|safe%}
+        An unexpected error occurred during the re-verification process.  Please contact {{ support_email }} for assistance.
+        {% endblocktrans %}
+    </div>
+  </div>
+</div>
