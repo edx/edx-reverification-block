@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-29 14:22-0400\n"
+"POT-Creation-Date: 2015-04-29 16:19-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,29 +33,11 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: edx_reverification_block/xblock/static/html/error.html:4
-msgid "Verification error"
-msgstr ""
-
-#: edx_reverification_block/xblock/static/html/error.html:6
-#, python-format
-msgid ""
-"\n"
-"        An error occurred during the verification process.\n"
-"        Try to verify your identity again, or contact %(support_email)s for "
-"help.\n"
-"        "
-msgstr ""
-
 #: edx_reverification_block/xblock/static/html/reverification.html:6
-msgid "Verification unsuccessful"
-msgstr ""
-
-#: edx_reverification_block/xblock/static/html/reverification.html:8
 msgid "Identity verification required"
 msgstr ""
 
-#: edx_reverification_block/xblock/static/html/reverification.html:11
+#: edx_reverification_block/xblock/static/html/reverification.html:8
 #, python-format
 msgid ""
 "\n"
@@ -67,16 +49,49 @@ msgid ""
 "        "
 msgstr ""
 
-#: edx_reverification_block/xblock/static/html/reverification.html:18
-#: edx_reverification_block/xblock/static/html/reverification.html:35
+#: edx_reverification_block/xblock/static/html/reverification.html:15
+msgid "Verification unsuccessful"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:17
+#, python-format
+msgid ""
+"\n"
+"        To receive credit in this course, you must try to verify your "
+"identity again. If you do not want to verify your identity, you can "
+"%(start_link)sopt out of verification%(end_link)s. However, you will no "
+"longer be eligible for credit in the course.\n"
+"        "
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:22
+msgid "Verification error"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:24
+#, python-format
+msgid ""
+"\n"
+"          An error occurred during the verification process.\n"
+"          Try to verify your identity again, or contact %(support_email)s "
+"for help.\n"
+"          "
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:33
+#: edx_reverification_block/xblock/static/html/reverification.html:54
 msgid "Verify Your Identity"
 msgstr ""
 
-#: edx_reverification_block/xblock/static/html/reverification.html:25
+#: edx_reverification_block/xblock/static/html/reverification.html:35
+msgid "Try Again"
+msgstr ""
+
+#: edx_reverification_block/xblock/static/html/reverification.html:44
 msgid "Are you sure you want to opt out of verification?"
 msgstr ""
 
-#: edx_reverification_block/xblock/static/html/reverification.html:27
+#: edx_reverification_block/xblock/static/html/reverification.html:46
 msgid ""
 "\n"
 "      To receive credit for this course, you must verify your identity every "
@@ -87,7 +102,7 @@ msgid ""
 "      "
 msgstr ""
 
-#: edx_reverification_block/xblock/static/html/reverification.html:36
+#: edx_reverification_block/xblock/static/html/reverification.html:55
 msgid "Opt Out of Verification and Course Credit"
 msgstr ""
 

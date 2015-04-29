@@ -1,4 +1,4 @@
-function SkipReverification(runtime, element) {
+function Reverification(runtime, element) {
   var $el = $(element);
 
   var setSkipConfirmVisible = function(isVisible) {

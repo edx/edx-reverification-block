@@ -2,11 +2,8 @@
 <div class="reverify-xblock">
   <div class="reverify-now-wrapper">
     <div class="reverify-now-content">
-      {% if status == "denied" %}
-      <div class="msg-title">{% trans "Verification unsuccessful" %}</div>
-      {% else %}
+      {% if not status %}
       <div class="msg-title">{% trans "Identity verification required" %}</div>
-      {% endif %}
       <div class="msg-content">
         {% blocktrans with start_link='<a href="#" class="reverify-skip-link">' end_link="</a>" %}
         To receive credit for this course, you must verify your identity every time you receive a verification message.
@@ -14,8 +11,30 @@
         However, you will no longer be eligible for credit in the course.
         {% endblocktrans %}
       </div>
+      {% elif status == "denied" %}
+      <div class="msg-title">{% trans "Verification unsuccessful" %}</div>
+      <div class="msg-content">
+        {% blocktrans with start_link='<a href="#" class="reverify-skip-link">' end_link="</a>" %}
+        To receive credit in this course, you must try to verify your identity again. If you do not want to verify your identity, you can {{ start_link }}opt out of verification{{ end_link }}. However, you will no longer be eligible for credit in the course.
+        {% endblocktrans %}
+      </div>
+      {% else %}
+      <div class="msg-title">{% trans "Verification error" %}</div>
+      <div class="msg-content">
+          {% blocktrans with support_email=support_email_link|safe%}
+          An error occurred during the verification process.
+          Try to verify your identity again, or contact {{ support_email }} for help.
+          {% endblocktrans %}
+      </div>
+      {% endif %}
     </div>
-    <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">{% trans "Verify Your Identity" %}</button>
+    <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">
+      {% if not status %}
+      {% trans "Verify Your Identity" %}
+      {% else %}
+      {% trans "Try Again" %}
+      {% endif %}
+    </button>
     <div class="reverify-clear-line"></div>
   </div>
 

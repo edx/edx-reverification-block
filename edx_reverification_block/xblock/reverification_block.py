@@ -61,8 +61,11 @@ class ReverificationBlock(XBlock):
         "submitted": "static/html/submitted.html",
         "approved": "static/html/approved.html",
         "denied": "static/html/reverification.html",
-        "error": "static/html/error.html",
+        "error": "static/html/reverification.html",
     }
+
+    # Status values that allow reverification
+    ALLOW_REVERIFICATION_STATUSES = set([None, "denied", "error"])
 
     # TODO: there isn't currently a way to get this from Django settings
     # in the edx-platform LMS.  We're hard-coding this for now,
@@ -116,6 +119,14 @@ class ReverificationBlock(XBlock):
             'support_email_link': '<a href="mailto:{email}">{email}</a>'.format(email=self.SUPPORT_EMAIL),
         }
 
+        if verification_status in self.ALLOW_REVERIFICATION_STATUSES:
+            reverification_link = self.runtime.service(self, "reverification").start_verification(
+                course_id=course_id,
+                related_assessment=related_assessment,
+                item_id=item_id
+            )
+            context['reverification_link'] = reverification_link
+
         if verification_status:
             status_template = self.TEMPLATE_FOR_STATUS.get(verification_status)
             if status_template is None:
@@ -132,18 +143,13 @@ class ReverificationBlock(XBlock):
             fragment.add_content(html)
 
         else:
-            reverification_link = self.runtime.service(self, "reverification").start_verification(
-                course_id=course_id,
-                related_assessment=related_assessment,
-                item_id=item_id
-            )
-            context['reverification_link'] = reverification_link
+
             html = self._render_template("static/html/reverification.html", context)
             fragment.add_content(html)
 
         # Add JS and CSS resources
-        fragment.add_javascript(self._resource("static/js/skip_reverification.js"))
-        fragment.initialize_js('SkipReverification')
+        fragment.add_javascript(self._resource("static/js/reverification.js"))
+        fragment.initialize_js('Reverification')
         fragment.add_css(self._resource(self.student_view_css_path()))
 
         return fragment
