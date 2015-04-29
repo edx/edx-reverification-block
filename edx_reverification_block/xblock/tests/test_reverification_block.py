@@ -50,7 +50,7 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_student_view_ready_to_reverify(self, xblock):
-        self._assert_in_student_view(xblock, "Re-Verify Now")
+        self._assert_in_student_view(xblock, "Verify Your Identity")
 
         reverify_url = reverse('stub_reverify_flow', args=(
             xblock.course_id,
@@ -63,7 +63,7 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
     @ddt.data(
         ("submitted", "submitted"),
         ("approved", "approved"),
-        ("denied", "not successful"),
+        ("denied", "unsuccessful"),
         ("error", "error"),
         ("unexpected", "error"),
     )
