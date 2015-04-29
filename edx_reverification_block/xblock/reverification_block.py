@@ -6,7 +6,7 @@ from django.template import Context, Template
 
 import pkg_resources
 from xblock.core import XBlock
-from xblock.fields import Scope, String, Boolean, Integer
+from xblock.fields import Scope, String, Boolean, Integer, DateTime
 from xblock.fragment import Fragment
 
 
@@ -46,6 +46,13 @@ class ReverificationBlock(XBlock):
         scope=Scope.content,
         default=False,
         help="Reverification XBlock is configured or not."
+    )
+
+    due = DateTime(
+        display_name="Related Assessment due date",
+        scope=Scope.settings,
+        default=None,
+        help="ISO-8601 formatted string representing the due date of this related assessment."
     )
 
     @property
