@@ -1,4 +1,5 @@
-git+https://github.com/edx/xblock-sdk.git@c07c867d5b3a5eb8a4a241b218083fb1d3416fc9#egg=xblock-sdk
+git+https://github.com/edx/xblock-sdk.git@8a3e40c3572c6d36715e4e6b699c94eab378e736#egg=xblock-sdk
+git+https://github.com/edx/i18n-tools.git@56f048af9b6868613c14aeae760548834c495011#egg=i18n_tools
 
 coverage==3.7.1
 ddt==0.8.0

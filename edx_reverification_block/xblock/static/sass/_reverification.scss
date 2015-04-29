@@ -25,6 +25,8 @@ $green: #1F8819;
 }
 
 .reverify-xblock {
+    @include text-align(left);
+
     .action {
         font: 16px/1.3 "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
         box-sizing: border-box;
@@ -70,9 +72,6 @@ $green: #1F8819;
         color: $dark-gray;
     }
 
-    .msg-content {
-        margin-right: 30px;
-    }
 }
 
 .reverify-now-wrapper {
@@ -140,24 +139,37 @@ $green: #1F8819;
         .reverify-now-content {
             width: 80%;
             position: relative;
-            float: left;
+            @include float(left);
         }
 
         .reverify-now-button {
             width: 20%;
-            float: right;
+            @include float(right);
         }
     }
 
     .reverify-skip-confirm-wrapper {
         .reverify-skip-actions {
-            float: right;
+            @include float(right);
         }
 
         .reverify-skip-cancel-button,
         .reverify-skip-confirm-button {
             width: auto;
             display: inline-block;
+        }
+    }
+
+    .reverify-xblock {
+        .msg-content, .msg-title {
+            @include margin-right(30px);
+        }
+    }
+
+    .reverify-skip-confirm-wrapper {
+        .msg-content, .msg-title {
+            margin-left: 0;
+            margin-right: 0;
         }
     }
 }

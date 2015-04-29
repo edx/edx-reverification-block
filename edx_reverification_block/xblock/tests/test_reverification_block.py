@@ -104,6 +104,14 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         expected_content = '<a href="mailto:support@edx.org">support@edx.org</a>'
         self._assert_in_student_view(xblock, expected_content)
 
+    @ddt.data('ltr', 'rtl')
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_rtl_support(self, xblock, text_direction):
+        bidi = (text_direction == 'rtl')
+        with patch('django.utils.translation.get_language_bidi', return_value=bidi):
+            css_path = xblock.student_view_css_path()
+            self.assertEqual(css_path, "static/reverification-{dir}.min.css".format(dir=text_direction))
+
     def _assert_in_student_view(self, xblock, expected_content):
         """Check that the student view contains the expected content. """
         xblock_fragment = self.runtime.render(xblock, "student_view")
