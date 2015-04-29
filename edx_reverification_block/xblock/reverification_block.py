@@ -73,31 +73,6 @@ class ReverificationBlock(XBlock):
             else "edX/Enchantment_101/April_1"
         )
 
-    @property
-    def in_studio_preview(self):
-        """
-        Check whether we are in Studio preview mode.
-
-        Returns:
-            bool
-
-        """
-        # When we're running in Studio Preview mode, the XBlock won't provide us with a user ID.
-        # (Note that `self.xmodule_runtime` will still provide an anonymous
-        # student ID, so we can't rely on that)
-        return self.scope_ids.user_id is None
-
-    @property
-    def is_released(self):
-        """
-        Check if a xblock has been released.
-
-        Returns:
-            bool
-        """
-        # By default, assume that we're published, in case the runtime doesn't support publish date.
-        return self.runtime.modulestore.has_published_version(self) if hasattr(self.runtime, 'modulestore') else True
-
     def student_view(self, context=None):
         """Student view to render the re-verification link
 
@@ -138,7 +113,7 @@ class ReverificationBlock(XBlock):
             )
             fragment.add_content(html)
             fragment.add_javascript(self._resource("static/js/skip_reverification.js"))
-            fragment.initialize_js('SkipReverifcation')
+            fragment.initialize_js('SkipReverification')
 
         fragment.add_css(self._resource("static/reverification.min.css"))
         return fragment
@@ -203,18 +178,14 @@ class ReverificationBlock(XBlock):
     @XBlock.json_handler
     def skip_verification(self, data, suffix=''):
         """
-        Called when submitting the form in Studio for skipping verification.
+        Called when submitting the form for skipping verification.
         """
-        checkpoint = data.get("checkpoint")
-        user_id = data.get("user_id")
-        course_id = data.get("course_id")
         self.runtime.service(self, "reverification").skip_verification(
-            checkpoint,
-            user_id,
-            course_id
+            self.related_assessment,
+            self.scope_ids.user_id,
+            self.course_id,
         )
-
-        return {'result': 'success'}
+        return {'success': True}
 
     def get_studio_preview(self):
         """ Return rendered studio view """

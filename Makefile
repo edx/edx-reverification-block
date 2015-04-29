@@ -17,7 +17,7 @@ test: install-test compile-sass
 	./scripts/test.sh
 
 compile-sass: install-sass
-	./node_modules/node-sass/bin/node-sass ./edx_reverification_block/xblock/static/sass/main.scss ./edx_reverification_block/xblock/static/reverification.min.css
+	./node_modules/node-sass/bin/node-sass ./edx_reverification_block/xblock/static/sass/main.scss ./edx_reverification_block/xblock/static/reverification.min.css --output-style compressed
 
 workbench: install-python compile-sass
 	./scripts/workbench.sh

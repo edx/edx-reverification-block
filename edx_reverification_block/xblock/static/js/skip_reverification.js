@@ -1,25 +1,35 @@
-function SkipReverifcation(runtime, element) {
-  $(element).find('#skip').bind('click', function() {
-      $(element).find('#skip-reverification-modal').show();
+function SkipReverification(runtime, element) {
+  var $el = $(element);
+
+  var setSkipConfirmVisible = function(isVisible) {
+    var skipConfirm = $el.find('.reverify-skip-confirm-wrapper'),
+        reverifyMsg = $el.find('.reverify-now-wrapper');
+    if (isVisible) {
+      reverifyMsg.addClass('hidden');
+      skipConfirm.removeClass('hidden');
+    } else {
+      skipConfirm.addClass('hidden');
+      reverifyMsg.removeClass('hidden');
+    }
+  };
+
+  $el.find('.reverify-skip-link').on('click', function() {
+    setSkipConfirmVisible(true);
   });
 
-  $(element).find("#close-modal").bind('click', function(){
-      $(element).find('#skip-reverification-modal').hide();
+  $el.find('.reverify-skip-cancel-button').on('click', function() {
+    setSkipConfirmVisible(false);
   });
 
-  $(element).find("#opt-out").bind('click', function(){
+  $el.find('.reverify-now-button').on('click', function() {
+    var href = $(this).data('href');
+    window.location.href = href;
+  });
+
+  $el.find('.reverify-skip-confirm-button').on('click', function(){
       var handlerUrl = runtime.handlerUrl(element, 'skip_verification');
-      var data = {
-        course_id: $(element).find('input[name=course_id]').val(),
-        user_id: $(element).find('input[name=user_id]').val(),
-        checkpoint: $(element).find('input[name=checkpoint]').val()
-      };
-      $.post(handlerUrl, JSON.stringify(data)).done(function (response) {
-        $(element).find('#skip-reverification-modal').hide();
+      $.post(handlerUrl, JSON.stringify('')).done(function (response) {
+        window.location.reload();
       });
-  });
-
-  $(element).find("#opt-out-cancel").bind('click', function(){
-      $(element).find('#skip-reverification-modal').hide();
   });
 }
