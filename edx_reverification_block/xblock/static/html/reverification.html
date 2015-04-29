@@ -3,30 +3,37 @@
   <div class="reverify-now-wrapper">
     <div class="reverify-now-content">
       {% if status == "denied" %}
-      <div class="msg-title">{% trans "Your re-verification was not successful" %}</div>
+      <div class="msg-title">{% trans "Verification unsuccessful" %}</div>
       {% else %}
-      <div class="msg-title">{% trans "Before you continue, you need to re-verify" %}</div>
+      <div class="msg-title">{% trans "Identity verification required" %}</div>
       {% endif %}
       <div class="msg-content">
         {% blocktrans with start_link='<a href="#" class="reverify-skip-link">' end_link="</a>" %}
-        To qualify to receive credit, you need to complete all re-verifications in the course.
-        If you do not want to re-verify, you can {{ start_link }}skip and opt out of credit.{{ end_link }}
+        To receive credit for this course, you must verify your identity every time you receive a verification message.
+        If you do not want to verify your identity, you can {{ start_link }}opt out of verification{{ end_link}}.
+        However, you will no longer be eligible for credit in the course.
         {% endblocktrans %}
       </div>
     </div>
-    <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">Re-Verify Now</button>
+    <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">{% trans "Verify Your Identity" %}</button>
     <div class="reverify-clear-line"></div>
   </div>
 
   <div class="reverify-skip-confirm-wrapper hidden">
     <div class="reverify-skip-confirm">
 
-      <div class="msg-title">{% trans "Are you sure you want to skip reverification?" %}</div>
-      <div class="msg-content">{% trans "To qualify to receive credit, you need to complete all re-verifications in the course.  If you skip, you can still work towards a Verified Certificate." %}</div>
+      <div class="msg-title">{% trans "Are you sure you want to opt out of verification?" %}</div>
+      <div class="msg-content">
+      {% blocktrans %}
+      To receive credit for this course, you must verify your identity every time you receive a verification message.
+      If you opt out of identity verification, you are no longer eligible for course credit.
+      However, you can still work toward a verified certificate.
+      {% endblocktrans %}
+      </div>
 
       <div class="reverify-skip-actions">
-        <button class="reverify-skip-cancel-button action action-secondary">{% trans "Cancel" %}</button>
-        <button class="reverify-skip-confirm-button action action-primary">{% trans "Skip and opt-out of credit" %}</button>
+        <button class="reverify-skip-cancel-button action action-secondary">{% trans "Verify Your Identity" %}</button>
+        <button class="reverify-skip-confirm-button action action-primary">{% trans "Opt Out of Verification and Course Credit" %}</button>
       </div>
 
       <div class="reverify-clear-line" />
