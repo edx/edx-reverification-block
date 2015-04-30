@@ -16,7 +16,6 @@ from stub_verification.models import VerificationStatus
 
 
 TESTS_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STUB_I18N = lambda x: x
 
 
 class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
@@ -50,8 +49,6 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         xblock_fragment = self.runtime.render(xblock, "student_view")
         self.assertTrue('edx-reverification-block' in xblock_fragment.body_html())
 
-        i18n = PropertyMock(return_value=STUB_I18N)
-        type(xblock)._ = i18n
         validation_messages = xblock.validate()
         self.assertEqual(len(validation_messages.to_json().get('messages')), 1)
         self.assertEqual(validation_messages.to_json().get('messages')[0].get('type'), 'warning')
@@ -67,6 +64,65 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         self.assertTrue(resp.get('result'))
         validation_messages = xblock.validate()
         self.assertEqual(len(validation_messages.to_json().get('messages')), 0)
+
+
+@ddt.ddt
+class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
+    """Test editing the XBlock in Studio. """
+
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_studio_editing_view(self, xblock):
+        xblock_fragment = self.runtime.render(xblock, "studio_view")
+        editing_html = xblock_fragment.body_html()
+
+        self.assertIn("Related Assessment", editing_html)
+        self.assertIn(xblock.related_assessment, editing_html)
+        self.assertIn("Attempts", editing_html)
+        self.assertIn(unicode(xblock.attempts), editing_html)
+
+    @ddt.data(
+        {'attempts': 5, 'related_assessment': 'final_exam'},
+        {'attempts': 5, 'related_assessment': u'\u2603'},
+    )
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_studio_submit_success(self, xblock, payload):
+        # Initially, the XBlock should not be configured
+        self.assertFalse(xblock.is_configured)
+
+        response = self.request(xblock, "studio_submit", json.dumps(payload), response_format="json")
+        self.assertEqual(response['result'], 'success')
+
+        # Check that the XBlock was updated correctly
+        self.assertEqual(xblock.related_assessment, payload['related_assessment'])
+        self.assertEqual(xblock.attempts, payload['attempts'])
+        self.assertTrue(xblock.is_configured)
+
+    @ddt.data(
+        # Missing required fields
+        {},
+        {'attempts': 5},
+        {'related_assessment': 'final_exam'},
+
+        # Negative attempts
+        {'attempts': -1, 'related_assessment': 'final_exam'},
+
+        # Empty related assessment string
+        {'attempts': 1, 'related_assessment': ''},
+
+        # Wrong type
+        {'attempts': 'foo', 'related_assessment': 'final_exam'},
+        {'attempts': '45.67', 'related_assessment': 'final_exam'},
+        {'attempts': 1, 'related_assessment': 5},
+    )
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_studio_submit_error(self, xblock, payload):
+        response = self.request(xblock, "studio_submit", json.dumps(payload), response_format="json")
+        self.assertEqual(response['result'], 'error')
+
+        # The XBlock should still have the default values
+        self.assertEqual(xblock.related_assessment, "Assessment 1")
+        self.assertEqual(xblock.attempts, 0)
+        self.assertFalse(xblock.is_configured)
 
 
 @ddt.ddt

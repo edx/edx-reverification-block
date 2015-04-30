@@ -8,7 +8,7 @@ import pkg_resources
 from xblock.core import XBlock
 from xblock.fields import Scope, String, Boolean, Integer, DateTime
 from xblock.fragment import Fragment
-from xblock.validation import Validation, ValidationMessage
+from xblock.validation import ValidationMessage
 
 
 log = logging.getLogger(__name__)
@@ -205,11 +205,33 @@ class ReverificationBlock(XBlock):
         """
         Called when submitting the form in Studio.
         """
-        self.related_assessment = data.get('related_assessment')
-        self.attempts = data.get('attempts')
-        self.is_configured = True
+        related_assessment = data.get('related_assessment')
+        attempts = data.get('attempts')
 
-        return {'result': 'success'}
+        # Paranoid checks of the parameters we receive
+        # None of these conditions should occur, because the front-end
+        # validation should catch it.
+        if related_assessment is None:
+            log.error("related_assessment field not found in request")
+        elif not isinstance(related_assessment, basestring):
+            log.error("related_assessment has type %s, but we expected a string", type(data['related_assessment']))
+        elif len(related_assessment) == 0:
+            log.error("related_assessment cannot be an empty string")
+        elif attempts is None:
+            log.error("attempts field not found in request")
+        elif not isinstance(attempts, int):
+            log.error("attempts field was %s, but we expected an integer", data['attempts'])
+        elif attempts < 0:
+            log.error("attempts field cannot be negative")
+        else:
+            self.related_assessment = data.get('related_assessment')
+            self.attempts = data.get('attempts')
+            self.is_configured = True
+
+            return {'result': 'success'}
+
+        # If we got to this point, an error must have occurred
+        return {'result': 'error'}
 
     @staticmethod
     def workbench_scenarios():
