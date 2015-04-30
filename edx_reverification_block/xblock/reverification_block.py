@@ -1,6 +1,8 @@
 """An XBlock for in-course reverification. """
 
+import datetime
 import logging
+import pytz
 
 from django.template import Context, Template
 
@@ -61,6 +63,7 @@ class ReverificationBlock(XBlock):
         "skipped": "static/html/skipped.html",
         "submitted": "static/html/submitted.html",
         "approved": "static/html/approved.html",
+        "closed": "static/html/closed.html",
         "denied": "static/html/reverification.html",
         "error": "static/html/reverification.html",
     }
@@ -108,12 +111,14 @@ class ReverificationBlock(XBlock):
         related_assessment = self.related_assessment
         user_id = unicode(self.scope_ids.user_id)
         fragment = Fragment()
-
-        verification_status = self.runtime.service(self, "reverification").get_status(
-            user_id=user_id,
-            course_id=course_id,
-            related_assessment=related_assessment
-        )
+        if self.due and self.due < datetime.datetime.today().replace(tzinfo=pytz.UTC):
+            verification_status = 'closed'
+        else:
+            verification_status = self.runtime.service(self, "reverification").get_status(
+                user_id=user_id,
+                course_id=course_id,
+                related_assessment=related_assessment
+            )
 
         context = {
             'status': verification_status,

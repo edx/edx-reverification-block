@@ -117,9 +117,17 @@ $green: #1F8819;
     }
 }
 
-.reverify-skipped {
+.reverify-basic {
     border: 2px solid $light-gray;
     padding: 20px 30px;
+}
+
+.reverify-skipped {
+    @extend .reverify-basic;
+}
+
+.reverify-closed {
+    @extend .reverify-basic;
 }
 
 .reverify-submitted {
