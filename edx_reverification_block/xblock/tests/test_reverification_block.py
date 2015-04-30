@@ -3,7 +3,7 @@ Tests the edX Reverification XBlock functionality.
 """
 import json
 import os
-from mock import patch
+from mock import Mock, PropertyMock, patch
 import ddt
 
 from django.test import TestCase
@@ -16,6 +16,7 @@ from stub_verification.models import VerificationStatus
 
 
 TESTS_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STUB_I18N = lambda x: x
 
 
 class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
@@ -28,11 +29,9 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_studio_preview(self, xblock):
-        # Test that creating Reverification XBlock for the first time user gets
-        # message to configure it
+        # Test that creating Reverification XBlock
         xblock_fragment = self.runtime.render(xblock, "student_view")
         self.assertTrue('edx-reverification-block' in xblock_fragment.body_html())
-        self.assertIn('This checkpoint is not associated with an assessment yet.', xblock_fragment.body_html())
 
         # Now set 'related_assessment' and 'attempts' fields and check that
         # values of these fields set correctly and also test that configuration
@@ -42,6 +41,32 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         self.assertTrue(resp.get('result'))
         xblock_fragment = self.runtime.render(xblock, "student_view")
         self.assertIn('click Preview or View Live', xblock_fragment.body_html())
+
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_studio_preview_validation(self, xblock):
+        # Test that on creating Reverification XBlock for the first time and
+        # calling its 'validate' method gives warning message to user to
+        # configure it.
+        xblock_fragment = self.runtime.render(xblock, "student_view")
+        self.assertTrue('edx-reverification-block' in xblock_fragment.body_html())
+
+        i18n = PropertyMock(return_value=STUB_I18N)
+        type(xblock)._ = i18n
+        validation_messages = xblock.validate()
+        self.assertEqual(len(validation_messages.to_json().get('messages')), 1)
+        self.assertEqual(validation_messages.to_json().get('messages')[0].get('type'), 'warning')
+        self.assertIn(
+            "This checkpoint is not associated with an assessment yet. Please select an Assessment.",
+            validation_messages.to_json().get('messages')[0].get('text')
+        )
+
+        # now set fields on Reverification XBlock and check that 'validate'
+        # method does not give warning message to configure it
+        data = json.dumps({'related_assessment': 'FinalExam', 'attempts': 5})
+        resp = self.request(xblock, 'studio_submit', data, response_format='json')
+        self.assertTrue(resp.get('result'))
+        validation_messages = xblock.validate()
+        self.assertEqual(len(validation_messages.to_json().get('messages')), 0)
 
 
 @ddt.ddt
@@ -108,9 +133,15 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_rtl_support(self, xblock, text_direction):
         bidi = (text_direction == 'rtl')
-        with patch('django.utils.translation.get_language_bidi', return_value=bidi):
-            css_path = xblock.student_view_css_path()
-            self.assertEqual(css_path, "static/reverification-{dir}.min.css".format(dir=text_direction))
+
+        # Configure "i18n_service" of xblock runtime with dummy response
+        i18nService = Mock()
+        attrs = {'get_language_bidi.return_value': bidi}
+        i18nService.configure_mock(**attrs)
+        xblock.runtime._services['i18n'] = i18nService
+
+        css_path = xblock.student_view_css_path()
+        self.assertEqual(css_path, "static/reverification-{dir}.min.css".format(dir=text_direction))
 
     def _assert_in_student_view(self, xblock, expected_content):
         """Check that the student view contains the expected content. """

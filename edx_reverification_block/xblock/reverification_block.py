@@ -8,6 +8,7 @@ import pkg_resources
 from xblock.core import XBlock
 from xblock.fields import Scope, String, Boolean, Integer, DateTime
 from xblock.fragment import Fragment
+from xblock.validation import Validation, ValidationMessage
 
 
 log = logging.getLogger(__name__)
@@ -234,7 +235,6 @@ class ReverificationBlock(XBlock):
     def get_studio_preview(self):
         """ Return rendered studio view """
         context = {
-            "is_configured": self.is_configured,
             "view_container_link": "/container/" + unicode(self.scope_ids.usage_id)
         }
 
@@ -264,3 +264,26 @@ class ReverificationBlock(XBlock):
         template_str = ReverificationBlock._resource(template_path)
         template = Template(template_str)
         return template.render(Context(context))
+
+    @property
+    def _(self):
+        i18nService = self.runtime.service(self, 'i18n')
+        return i18nService.ugettext
+
+    def validate(self):
+        """
+        Basic validation for this XBlock.
+        """
+        reverification_block_validation = super(ReverificationBlock, self).validate()
+
+        if not self.is_configured:
+            reverification_block_validation.add(
+                ValidationMessage(
+                    ValidationMessage.WARNING,
+                    self._(
+                        u"This checkpoint is not associated with an assessment yet. "
+                        u"Please select an Assessment."
+                    )
+                )
+            )
+        return reverification_block_validation
