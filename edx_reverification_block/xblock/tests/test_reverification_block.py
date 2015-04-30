@@ -3,7 +3,7 @@ Tests the edX Reverification XBlock functionality.
 """
 import json
 import os
-from mock import PropertyMock, patch
+from mock import Mock, PropertyMock, patch
 import ddt
 
 from django.test import TestCase
@@ -133,9 +133,15 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_rtl_support(self, xblock, text_direction):
         bidi = (text_direction == 'rtl')
-        with patch('django.utils.translation.get_language_bidi', return_value=bidi):
-            css_path = xblock.student_view_css_path()
-            self.assertEqual(css_path, "static/reverification-{dir}.min.css".format(dir=text_direction))
+
+        # Configure "i18n_service" of xblock runtime with dummy response
+        i18nService = Mock()
+        attrs = {'get_language_bidi.return_value': bidi}
+        i18nService.configure_mock(**attrs)
+        xblock.runtime._services['i18n'] = i18nService
+
+        css_path = xblock.student_view_css_path()
+        self.assertEqual(css_path, "static/reverification-{dir}.min.css".format(dir=text_direction))
 
     def _assert_in_student_view(self, xblock, expected_content):
         """Check that the student view contains the expected content. """
