@@ -7,20 +7,22 @@ function CheckpointEditBlock(runtime, element) {
             return true;
         },
         'string': function (value) {
-            if ( value != '' ) {
+            if ( value !== '' ) {
                 return true;
             }
             return false;
         }
-    }
+    };
 
     function validate(data) {
         var errors = [];
         if ( !validators.string(data.related_assessment) ) {
-            errors.push("Related Assessment field cannot be empty.");
+            errors.push(gettext("Related Assessment field cannot be empty."));
         }
         if ( !validators.number(data.attempts) ) {
-            errors.push("Attempts field should be a positive number.");
+            errors.push(gettext("Attempts field should be a positive number."));
+        } else {
+            data.attempts = Math.floor(Number(data.attempts));
         }
         return errors;
     }
@@ -35,14 +37,21 @@ function CheckpointEditBlock(runtime, element) {
         };
 
         var validation_errors = validate(data);
-        if ( validation_errors.length == 0 ) {
+        if ( validation_errors.length === 0 ) {
             runtime.notify('save', {state: 'start'});
             $.post(handlerUrl, JSON.stringify(data)).done(function (response) {
-                runtime.notify('save', {state: 'end'});
+                if (response.result === "success") {
+                    runtime.notify('save', {state: 'end'});
+                } else {
+                    runtime.notify('error', {
+                        title: gettext('Re-Verification Save Error'),
+                        message: gettext('An unexpected error occurred while saving.')
+                    });
+                }
             });
         } else {
-            var message = "Validation Error[s]:<br>" + validation_errors.join(' <br>')
-            runtime.notify('error', {title: 'Re-Verification Save Error', message: message});
+            var message = gettext("Validation Error[s]:") + "<br>" + validation_errors.join(' <br>');
+            runtime.notify('error', {title: gettext('Re-Verification Save Error'), message: message});
         }
     });
 
