@@ -7,6 +7,7 @@ photos!
 
 """
 from django.core.urlresolvers import reverse
+
 from .models import VerificationStatus, SkipVerification
 
 
@@ -46,3 +47,16 @@ class StubVerificationService(object):
             course_id=course_id,
             user_id=user_id,
         )
+
+    def get_attempts(self, user_id, course_id, related_assessment, location_id):
+        """
+        Return the number of re-verification attempts of a user for a
+        checkpoint.
+        """
+        return VerificationStatus.objects.filter(
+            user_id=user_id,
+            course_id=course_id,
+            checkpoint_name=related_assessment,
+            location_id=location_id,
+            status="submitted"
+        ).count()
