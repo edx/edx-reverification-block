@@ -1,6 +1,16 @@
 {% load i18n %}
 <div class="reverify-xblock">
   <div class="reverify-now-wrapper">
+    {% if remaining_attempts == 0 %}
+    <div class="">
+      <div class="msg-title">{% trans "Verification unsuccessful" %}</div>
+      <div class="msg-content">
+        {% blocktrans with support_email=support_email_link|safe %}
+        The attempt to verify your identity was unsuccessful. This assessment has closed and you are no longer eligible for credit in this course. If you feel that there has been a mistake, contact {{ support_email }}.
+        {% endblocktrans %}
+      </div>
+    </div>
+    {% else %}
     <div class="reverify-now-content">
       {% if not status %}
       <div class="msg-title">{% trans "Identity verification required" %}</div>
@@ -21,13 +31,16 @@
       {% else %}
       <div class="msg-title">{% trans "Verification error" %}</div>
       <div class="msg-content">
-          {% blocktrans with support_email=support_email_link|safe%}
+          {% blocktrans with support_email=support_email_link|safe %}
           An error occurred during the verification process.
           Try to verify your identity again, or contact {{ support_email }} for help.
           {% endblocktrans %}
       </div>
       {% endif %}
     </div>
+    {% endif %}
+
+    {% if remaining_attempts > 0 %}
     <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">
       {% if not status %}
       {% trans "Verify Your Identity" %}
@@ -35,6 +48,7 @@
       {% trans "Try Again" %}
       {% endif %}
     </button>
+    {% endif %}
     <div class="reverify-clear-line"></div>
   </div>
 

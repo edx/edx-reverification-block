@@ -22,6 +22,9 @@ class VerificationStatus(models.Model):
     checkpoint_name = models.CharField(max_length=32)
     user_id = models.CharField(max_length=255)
     status = models.CharField(max_length=255, choices=STATUS_CHOICES)
+    response = models.TextField(null=True, blank=True)
+    error = models.TextField(null=True, blank=True)
+    location_id = models.CharField(null=True, blank=True, max_length=255)
 
     class Meta:
         unique_together = ('course_id', 'checkpoint_name', 'user_id')

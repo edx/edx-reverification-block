@@ -120,8 +120,17 @@ class ReverificationBlock(XBlock):
                 related_assessment=related_assessment
             )
 
+        user_attempts = self.runtime.service(self, "reverification").get_attempts(
+            user_id=user_id,
+            course_id=course_id,
+            related_assessment=related_assessment,
+            location_id=item_id
+        )
+        remaining_attempts = self.remaining_attempts(user_attempts)
+
         context = {
             'status': verification_status,
+            'remaining_attempts': remaining_attempts,
             'support_email_link': '<a href="mailto:{email}">{email}</a>'.format(email=self.SUPPORT_EMAIL),
         }
 
@@ -149,7 +158,6 @@ class ReverificationBlock(XBlock):
             fragment.add_content(html)
 
         else:
-
             html = self._render_template("static/html/reverification.html", context)
             fragment.add_content(html)
 
@@ -314,3 +322,28 @@ class ReverificationBlock(XBlock):
                 )
             )
         return reverification_block_validation
+
+    def remaining_attempts(self, user_attempts):
+        """
+        Get the number of remaining attempts against a user for a
+        Reverification XBlock.
+
+        Args:
+            user_attempts(int): Number of re-verification attempts made by user
+
+        Returns:
+            Integer: Number of attempts against a user for a Reverification
+            XBlock
+        """
+        # check if the 'attempts' field is not set i.e, 0 then user will get
+        # one attempt
+        if self.attempts == 0 and user_attempts == 0:
+            return 1
+
+        # check if 'attempts' field is set for Reverification XBlock and the
+        # number of re-verification attempts made by the user exceeds that
+        # number then user has no remaining attempts
+        if self.attempts > 0 and (user_attempts >= self.attempts):
+            return 0
+
+        return self.attempts - user_attempts
