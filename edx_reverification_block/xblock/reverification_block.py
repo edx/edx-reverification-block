@@ -15,6 +15,7 @@ from xblock.validation import ValidationMessage
 
 log = logging.getLogger(__name__)
 CHECKPOINT_NAME = "Assessment 1"
+CREDIT_REQUIREMENT_NAMESPACE = "reverification"
 
 
 @XBlock.wants("reverification")
@@ -347,3 +348,15 @@ class ReverificationBlock(XBlock):
             return 0
 
         return self.attempts - user_attempts
+
+    def is_course_credit_requirement(self):
+        """ It tells that the xblock is a credit course requirement """
+        return True
+
+    def get_credit_requirement_namespace(self):
+        """ Returns the namespace used for this credit requirements """
+        return CREDIT_REQUIREMENT_NAMESPACE
+
+    def get_credit_requirement_name(self):
+        """ Returns the names used for this credit requirements """
+        return unicode(self.scope_ids.usage_id)
