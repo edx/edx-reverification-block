@@ -7,12 +7,12 @@ from .models import VerificationStatus
 
 
 @require_GET
-def stub_reverify_flow(request, course_id, checkpoint_name, usage_id, user_id):
+def stub_reverify_flow(request, course_id, usage_id, user_id):
     """Display a page that allows users to (fake) submit photos. """
     context = RequestContext(request, {
         'user_id': user_id,
         'course_id': course_id,
-        'checkpoint_name': checkpoint_name
+        'checkpoint_location': usage_id
     })
     return render_to_response("stub_verification/reverify.html", context)
 
@@ -22,7 +22,7 @@ def stub_submit_reverification_photos(request):
     """Simulate that the user has submitted photos. """
     params = {
         'course_id': request.POST.get('course_id'),
-        'checkpoint_name': request.POST.get('checkpoint_name'),
+        'checkpoint_location': request.POST.get('checkpoint_location'),
         'user_id': request.POST.get('user_id')
     }
 

@@ -9,16 +9,14 @@ from stub_verification.models import VerificationStatus
 class StubReverificationViewsTest(TestCase):
     """Test the fake reverification flow views. """
 
-    COURSE_ID = "edX/DemoX/Demo_Course"
-    RELATED_ASSESSMENT = "midterm"
-    ITEM_ID = "abcd1234"
     USER_ID = "bob"
+    COURSE_ID = "edX/DemoX/Demo_Course"
+    ITEM_ID = u"i4x://edX/DemoX/edx-reverification-block/checkpoint_location"
 
     def test_stub_reverify(self):
         # Enter the fake reverification flow
         url = reverse("stub_reverify_flow", args=(
             self.COURSE_ID,
-            self.RELATED_ASSESSMENT,
             self.ITEM_ID,
             self.USER_ID
         ))
@@ -28,7 +26,7 @@ class StubReverificationViewsTest(TestCase):
         url = reverse('stub_submit_reverification_photos')
         resp = self.client.post(url, {
             'course_id': self.COURSE_ID,
-            'checkpoint_name': self.RELATED_ASSESSMENT,
+            'checkpoint_location': self.ITEM_ID,
             'user_id': self.USER_ID,
         })
         self.assertContains(resp, "Photos Submitted")
@@ -36,7 +34,7 @@ class StubReverificationViewsTest(TestCase):
         # Check that the status has been updated
         status = VerificationStatus.objects.get(
             course_id=self.COURSE_ID,
-            checkpoint_name=self.RELATED_ASSESSMENT,
+            checkpoint_location=self.ITEM_ID,
             user_id=self.USER_ID
         )
         self.assertEqual(status.status, "submitted")

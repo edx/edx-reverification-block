@@ -96,10 +96,9 @@ class ReverificationBlock(XBlock):
         )
 
     def student_view(self, context=None):
-        """Student view to render the re-verification link
+        """Student view to render the re-verification link.
 
         This will render the url to display in lms along with marketing text.
-
         """
         # Assume that if service is not available then it is
         # in studio_preview because service are defined in LMS
@@ -117,14 +116,13 @@ class ReverificationBlock(XBlock):
             verification_status = self.runtime.service(self, "reverification").get_status(
                 user_id=user_id,
                 course_id=course_id,
-                related_assessment=related_assessment
+                related_assessment_location=item_id
             )
 
         user_attempts = self.runtime.service(self, "reverification").get_attempts(
             user_id=user_id,
             course_id=course_id,
-            related_assessment=related_assessment,
-            location_id=item_id
+            related_assessment_location=item_id,
         )
         remaining_attempts = self.remaining_attempts(user_attempts)
 
@@ -137,8 +135,7 @@ class ReverificationBlock(XBlock):
         if verification_status in self.ALLOW_REVERIFICATION_STATUSES:
             reverification_link = self.runtime.service(self, "reverification").start_verification(
                 course_id=course_id,
-                related_assessment=related_assessment,
-                item_id=item_id
+                related_assessment_location=item_id
             )
             context['reverification_link'] = reverification_link
 
@@ -261,9 +258,8 @@ class ReverificationBlock(XBlock):
         Called when submitting the form for skipping verification.
         """
         self.runtime.service(self, "reverification").skip_verification(
-            self.related_assessment,
             self.scope_ids.user_id,
-            self.course_id,
+            self.course_id
         )
         return {'success': True}
 

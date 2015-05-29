@@ -1,17 +1,18 @@
 """
 Tests the edX Reverification XBlock functionality.
 """
+
 import json
 import os
-from mock import Mock, PropertyMock, patch
-import ddt
 
-from django.test import TestCase
+import ddt
+from mock import Mock, PropertyMock, patch
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.test import TestCase
 
 from workbench.test_utils import XBlockHandlerTestCaseMixin, scenario
-
 from stub_verification.models import VerificationStatus
 
 
@@ -19,16 +20,20 @@ TESTS_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
-    """Test the display of the reverification block in Studio Preview. """
-
-    # Simulate that we are in Studio preview by un-installing the verification service
+    """
+    Test the display of the Reverification XBlock in Studio Preview.
+    """
+    # simulate that we are in Studio preview by un-installing the verification
+    # service
     @patch.dict(settings.WORKBENCH['services'], {}, clear=True)
     def setUp(self):
         super(TestStudioPreview, self).setUp()
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_studio_preview(self, xblock):
-        # Test that creating Reverification XBlock
+        """
+        Test Reverification XBlock preview in Studio.
+        """
         xblock_fragment = self.runtime.render(xblock, "student_view")
         self.assertTrue('edx-reverification-block' in xblock_fragment.body_html())
 
@@ -43,6 +48,9 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_studio_preview_validation(self, xblock):
+        """
+        Test reverification block validation in Studio.
+        """
         # Test that on creating Reverification XBlock for the first time and
         # calling its 'validate' method gives warning message to user to
         # configure it.
@@ -68,7 +76,9 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
 
 @ddt.ddt
 class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
-    """Test editing the XBlock in Studio. """
+    """
+    Test editing the Reverification XBlock in Studio.
+    """
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_studio_editing_view(self, xblock):
@@ -136,7 +146,6 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         reverify_url = reverse('stub_reverify_flow', args=(
             xblock.course_id,
             xblock.scope_ids.usage_id,
-            xblock.related_assessment,
             xblock.scope_ids.user_id),
         )
         self._assert_in_student_view(xblock, reverify_url)
@@ -154,7 +163,7 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         # Simulate the verification status
         VerificationStatus.objects.create(
             course_id=xblock.course_id,
-            checkpoint_name=xblock.related_assessment,
+            checkpoint_location=unicode(xblock.scope_ids.usage_id),
             user_id=xblock.scope_ids.user_id,
             status=status
         )
@@ -176,7 +185,7 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         # Simulate an error verification status
         VerificationStatus.objects.create(
             course_id=xblock.course_id,
-            checkpoint_name=xblock.related_assessment,
+            checkpoint_location=unicode(xblock.scope_ids.usage_id),
             user_id=xblock.scope_ids.user_id,
             status="error"
         )
