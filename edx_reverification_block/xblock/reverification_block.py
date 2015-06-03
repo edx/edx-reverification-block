@@ -1,4 +1,6 @@
-"""An XBlock for in-course reverification. """
+"""
+XBlock for in-course reverification.
+"""
 
 import datetime
 import logging
@@ -21,8 +23,9 @@ CREDIT_REQUIREMENT_NAMESPACE = "reverification"
 @XBlock.wants("reverification")
 @XBlock.needs("i18n")
 class ReverificationBlock(XBlock):
-    """An XBlock for in-course reverification. """
-
+    """
+    An XBlock for in-course reverification.
+    """
     # Fields
     display_name = String(
         scope=Scope.settings,
@@ -167,7 +170,9 @@ class ReverificationBlock(XBlock):
         return fragment
 
     def student_view_css_path(self):
-        """Retrieve the CSS path for the student view based on the language text-direction. """
+        """Retrieve the CSS path for the student view based on the language
+        text-direction.
+        """
         i18n_service = self.runtime.service(self, 'i18n')
         if hasattr(i18n_service, 'get_language_bidi') and i18n_service.get_language_bidi():
             return "static/reverification-rtl.min.css"
@@ -265,7 +270,9 @@ class ReverificationBlock(XBlock):
         return {'success': True}
 
     def get_studio_preview(self):
-        """ Return rendered studio view """
+        """
+        Return rendered studio view.
+        """
         context = {
             "view_container_link": "/container/" + unicode(self.scope_ids.usage_id)
         }
@@ -346,13 +353,25 @@ class ReverificationBlock(XBlock):
         return self.attempts - user_attempts
 
     def is_course_credit_requirement(self):
-        """ It tells that the xblock is a credit course requirement """
+        """
+        Check that if this XBlock is a credit course requirement.
+        """
         return True
 
     def get_credit_requirement_namespace(self):
-        """ Returns the namespace used for this credit requirements """
+        """
+        Return the namespace used for this credit requirement.
+        """
         return CREDIT_REQUIREMENT_NAMESPACE
 
     def get_credit_requirement_name(self):
-        """ Returns the names used for this credit requirements """
+        """
+        Returns the names used for this credit requirement.
+        """
         return unicode(self.scope_ids.usage_id)
+
+    def get_credit_requirement_display_name(self):
+        """
+        Get the display name used for this credit requirement.
+        """
+        return unicode(self.related_assessment)
