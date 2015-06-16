@@ -375,3 +375,20 @@ class ReverificationBlock(XBlock):
         Get the display name used for this credit requirement.
         """
         return unicode(self.related_assessment)
+
+    # TODO -- experimental!
+    def sequential_block_content(self):
+        service = self.runtime.service(self, "reverification")
+        if not service:
+            return False
+        else:
+            course_id = self.course_id
+            item_id = unicode(self.scope_ids.usage_id)
+            user_id = unicode(self.scope_ids.user_id)
+
+            status = service.get_status(
+                user_id=user_id,
+                course_id=course_id,
+                related_assessment_location=item_id
+            )
+            return status not in ["submitted", "approved"]
