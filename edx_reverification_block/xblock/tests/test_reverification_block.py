@@ -174,7 +174,12 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_skip_reverification(self, xblock):
         # Skip verification
-        response = self.request(xblock, "skip_verification", json.dumps(""), response_format="json")
+        payload = {
+            'user_id': xblock.scope_ids.user_id,
+            'course_id': xblock.course_id,
+            'checkpoint_location': unicode(xblock.scope_ids.usage_id)
+        }
+        response = self.request(xblock, "skip_verification", json.dumps(payload), response_format="json")
         self.assertTrue(response['success'])
 
         # Reloading the student view, we should see that we've skipped

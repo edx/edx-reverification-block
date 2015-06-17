@@ -40,11 +40,12 @@ class StubVerificationService(object):
             unicode(self.runtime.user_id)
         ))
 
-    def skip_verification(self, user_id, course_id):
+    def skip_verification(self, user_id, course_id, related_assessment_location):
         """Mark that the user has skipped verification for the course. """
         SkipVerification.objects.get_or_create(
-            course_id=course_id,
             user_id=user_id,
+            course_id=course_id,
+            checkpoint_location=related_assessment_location
         )
 
     def get_attempts(self, user_id, course_id, related_assessment_location):
