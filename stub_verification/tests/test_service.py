@@ -44,7 +44,7 @@ class StubVerificationServiceTest(TestCase):
 
     def test_skip_verification(self):
         # Skip verification
-        self.service.skip_verification(self.USER_ID, self.COURSE_ID)
+        self.service.skip_verification(self.USER_ID, self.COURSE_ID, self.ITEM_ID)
 
         # Check that the status is "skipped"
         self.assertEqual(self._get_status(), "skipped")

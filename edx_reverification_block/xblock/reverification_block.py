@@ -265,7 +265,8 @@ class ReverificationBlock(XBlock):
         """
         self.runtime.service(self, "reverification").skip_verification(
             self.scope_ids.user_id,
-            self.course_id
+            self.course_id,
+            unicode(self.scope_ids.usage_id)
         )
         return {'success': True}
 

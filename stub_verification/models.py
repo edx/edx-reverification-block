@@ -35,3 +35,4 @@ class SkipVerification(models.Model):
     """Track whether the user skipped verification for a course. """
     course_id = models.CharField(max_length=255, db_index=True)
     user_id = models.CharField(max_length=255)
+    checkpoint_location = models.CharField(max_length=255)
