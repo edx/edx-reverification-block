@@ -6,7 +6,16 @@
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
         <label class="label setting-label" for="{{ field.name }}_input">{{ field.display_name }}</label>
-        <input required class="input setting-input" name="{{ field.name }}" id="{{ field.name }}_input" value="{{ value }}" data-validator="{{ validator }}" type="text" />
+        {% if field.name == "attempts" %}
+          <select name="{{field.name}}" id="{{field.name}}_input">
+            <option value="0" {% if value == 0 %} selected="selected" {% endif %} >0</option>
+            <option value="1" {% if value == 1 %} selected="selected" {% endif %} >1</option>
+            <option value="2" {% if value == 2 %} selected="selected" {% endif %} >2</option>
+            <option value="3" {% if value == 3 %} selected="selected" {% endif %} >3</option>
+          </select>
+        {% else %}
+          <input required class="input setting-input" name="{{ field.name }}" id="{{ field.name }}_input" value="{{ value }}" data-validator="{{ validator }}" type="text" />
+        {% endif %}
       </div>
       <span class="tip setting-help">{{ field.help }}</span>
     </li>

@@ -33,7 +33,7 @@ function CheckpointEditBlock(runtime, element) {
 
         var data = {
             related_assessment: $(element).find('input[name=related_assessment]').val().trim(),
-            attempts: $(element).find('input[name=attempts]').val().trim()
+            attempts: $(element).find('select[name=attempts]').val().trim()
         };
 
         var validation_errors = validate(data);
