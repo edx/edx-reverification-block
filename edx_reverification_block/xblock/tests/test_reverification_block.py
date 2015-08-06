@@ -44,7 +44,7 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         resp = self.request(xblock, 'studio_submit', data, response_format='json')
         self.assertTrue(resp.get('result'))
         xblock_fragment = self.runtime.render(xblock, "student_view")
-        self.assertIn('click Preview or View Live', xblock_fragment.body_html())
+        self.assertIn('select View Live Version or Preview', xblock_fragment.body_html())
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_studio_preview_validation(self, xblock):
@@ -61,7 +61,7 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         self.assertEqual(len(validation_messages.to_json().get('messages')), 1)
         self.assertEqual(validation_messages.to_json().get('messages')[0].get('type'), 'warning')
         self.assertIn(
-            "This checkpoint is not associated with an assessment yet. Please select an Assessment.",
+            "To associate the checkpoint with an assessment, select Edit.",
             validation_messages.to_json().get('messages')[0].get('text')
         )
 
@@ -85,9 +85,9 @@ class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
         xblock_fragment = self.runtime.render(xblock, "studio_view")
         editing_html = xblock_fragment.body_html()
 
-        self.assertIn("Related Assessment", editing_html)
+        self.assertIn("Associated Assessment", editing_html)
         self.assertIn(xblock.related_assessment, editing_html)
-        self.assertIn("Attempts", editing_html)
+        self.assertIn("attempts", editing_html)
         self.assertIn(unicode(xblock.attempts), editing_html)
 
     @ddt.data(
