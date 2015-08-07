@@ -17,10 +17,10 @@ function CheckpointEditBlock(runtime, element) {
     function validate(data) {
         var errors = [];
         if ( !validators.string(data.related_assessment) ) {
-            errors.push(gettext("Related Assessment field cannot be empty."));
+            errors.push(gettext("The Associated Assessment field cannot be empty."));
         }
         if ( !validators.number(data.attempts) ) {
-            errors.push(gettext("Attempts field should be a positive number."));
+            errors.push(gettext("You must select a value other than 0 for the Verification Attempts field."));
         } else {
             data.attempts = Math.floor(Number(data.attempts));
         }
@@ -44,14 +44,14 @@ function CheckpointEditBlock(runtime, element) {
                     runtime.notify('save', {state: 'end'});
                 } else {
                     runtime.notify('error', {
-                        title: gettext('Re-Verification Save Error'),
-                        message: gettext('An unexpected error occurred while saving.')
+                        title: gettext('Reverification Save Error'),
+                        message: gettext('An unexpected error occurred. Select Save to try again.')
                     });
                 }
             });
         } else {
-            var message = gettext("Validation Error[s]:") + "<br>" + validation_errors.join(' <br>');
-            runtime.notify('error', {title: gettext('Re-Verification Save Error'), message: message});
+            var message = '<br>' + validation_errors.join(' <br>');
+            runtime.notify('error', {title: gettext('Reverification Save Error'), message: message});
         }
     });
 

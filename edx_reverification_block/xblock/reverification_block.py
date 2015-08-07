@@ -29,7 +29,7 @@ class ReverificationBlock(XBlock):
     # Fields
     display_name = String(
         scope=Scope.settings,
-        default='Re-Verification Checkpoint',
+        default='Reverification Checkpoint',
         help="This name appears in the horizontal navigation at the top of "
              "the page."
     )
@@ -38,16 +38,15 @@ class ReverificationBlock(XBlock):
         display_name="Verification Attempts",
         default=0,
         scope=Scope.settings,
-        help="This is the number of attempts that students are permitted to "
-             "get a valid re-verification."
+        help="The number of times learners can attempt to verify their identity."
     )
 
     related_assessment = String(
-        display_name="Related Assessment",
+        display_name="Associated Assessment",
         scope=Scope.content,
         default=CHECKPOINT_NAME,
-        help="This name will allow you to distinguish distinct checkpoints "
-             "that show up in the reporting about student verification status."
+        help="The display name of the associated assessment. "
+             "You can create the assessment either before or after you create the associated checkpoint."
     )
 
     is_configured = Boolean(
@@ -321,8 +320,8 @@ class ReverificationBlock(XBlock):
                 ValidationMessage(
                     ValidationMessage.WARNING,
                     self._(
-                        u"This checkpoint is not associated with an assessment yet. "
-                        u"Please select an Assessment."
+                        u"This checkpoint is not associated with an assessment. "
+                        u"To associate the checkpoint with an assessment, select Edit."
                     )
                 )
             )
