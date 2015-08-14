@@ -8,7 +8,7 @@ photos!
 """
 from django.core.urlresolvers import reverse
 
-from .models import VerificationStatus, SkipVerification
+from .models import VerificationStatus, SkipVerification, DisableSubmission
 
 
 class StubVerificationService(object):
@@ -59,3 +59,12 @@ class StubVerificationService(object):
             checkpoint_location=related_assessment_location,
             status="submitted"
         ).count()
+
+    def can_submit(self, user_id, course_id):
+        """
+        Check whether the user is allowed to submit at this checkpoint.
+        """
+        return not DisableSubmission.objects.filter(
+            user_id=user_id,
+            course_id=course_id,
+        ).exists()

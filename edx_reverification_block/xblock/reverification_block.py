@@ -103,9 +103,11 @@ class ReverificationBlock(XBlock):
 
         This will render the url to display in lms along with marketing text.
         """
+        service = self.runtime.service(self, "reverification")
+
         # Assume that if service is not available then it is
         # in studio_preview because service are defined in LMS
-        if not self.runtime.service(self, "reverification"):
+        if not service:
             return self.get_studio_preview()
 
         course_id = self.course_id
@@ -113,20 +115,19 @@ class ReverificationBlock(XBlock):
         related_assessment = self.related_assessment
         user_id = unicode(self.scope_ids.user_id)
         fragment = Fragment()
+
+        if not service.can_submit(user_id, course_id):
+            html = self._render_template("static/html/not_verified.html", {})
+            fragment.add_content(html)
+            fragment.add_css(self._resource(self.student_view_css_path()))
+            return fragment
+
         if self.due and self.due < datetime.datetime.today().replace(tzinfo=pytz.UTC):
             verification_status = 'closed'
         else:
-            verification_status = self.runtime.service(self, "reverification").get_status(
-                user_id=user_id,
-                course_id=course_id,
-                related_assessment_location=item_id
-            )
+            verification_status = service.get_status(user_id, course_id, item_id)
 
-        user_attempts = self.runtime.service(self, "reverification").get_attempts(
-            user_id=user_id,
-            course_id=course_id,
-            related_assessment_location=item_id,
-        )
+        user_attempts = service.get_attempts(user_id, course_id, item_id)
         remaining_attempts = self.remaining_attempts(user_attempts)
 
         context = {
@@ -136,10 +137,7 @@ class ReverificationBlock(XBlock):
         }
 
         if verification_status in self.ALLOW_REVERIFICATION_STATUSES:
-            reverification_link = self.runtime.service(self, "reverification").start_verification(
-                course_id=course_id,
-                related_assessment_location=item_id
-            )
+            reverification_link = service.start_verification(course_id, item_id)
             context['reverification_link'] = reverification_link
 
         if verification_status:

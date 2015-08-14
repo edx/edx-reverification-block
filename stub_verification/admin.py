@@ -6,7 +6,8 @@ just flip the status in Django admin!
 """
 
 from django.contrib import admin
-from .models import VerificationStatus, SkipVerification
+from .models import VerificationStatus, SkipVerification, DisableSubmission
 
 admin.site.register(VerificationStatus)
 admin.site.register(SkipVerification)
+admin.site.register(DisableSubmission)

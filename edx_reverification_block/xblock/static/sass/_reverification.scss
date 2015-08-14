@@ -130,7 +130,7 @@ $green: #1F8819;
     @extend .reverify-basic;
 }
 
-.reverify-submitted {
+.reverify-submitted, .reverify-cannot-submit {
     @include msg-box($dark-gray);
 }
 

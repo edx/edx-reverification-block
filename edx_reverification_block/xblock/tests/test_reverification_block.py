@@ -6,14 +6,14 @@ import json
 import os
 
 import ddt
-from mock import Mock, PropertyMock, patch
+from mock import Mock, patch
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from workbench.test_utils import XBlockHandlerTestCaseMixin, scenario
-from stub_verification.models import VerificationStatus
+from stub_verification.models import VerificationStatus, DisableSubmission
 
 
 TESTS_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -170,6 +170,17 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
 
         # Check that the status is displayed correctly
         self._assert_in_student_view(xblock, expected_content)
+
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_cannot_submit(self, xblock):
+        # Simulate that the user is not allowed to submit at this checkpoint
+        # (most likely not enrolled in a verified track).
+        DisableSubmission.objects.create(
+            course_id=xblock.course_id,
+            user_id=xblock.scope_ids.user_id
+        )
+
+        self._assert_in_student_view(xblock, "reverify-cannot-submit")
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_skip_reverification(self, xblock):

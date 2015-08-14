@@ -36,3 +36,12 @@ class SkipVerification(models.Model):
     course_id = models.CharField(max_length=255, db_index=True)
     user_id = models.CharField(max_length=255)
     checkpoint_location = models.CharField(max_length=255)
+
+
+class DisableSubmission(models.Model):
+    """Simulate that the user cannot submit at checkpoints in a course. """
+    course_id = models.CharField(max_length=255, db_index=True)
+    user_id = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('course_id', 'user_id')
