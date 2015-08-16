@@ -122,7 +122,7 @@ $green: #1F8819;
     padding: 20px 30px;
 }
 
-.reverify-skipped {
+.reverify-skipped, .reverify-not-verified {
     @extend .reverify-basic;
 }
 

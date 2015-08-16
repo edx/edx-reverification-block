@@ -156,6 +156,7 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         ("denied", "unsuccessful"),
         ("error", "error"),
         ("unexpected", "error"),
+        ("not-verified", "reverify-not-verified"),
     )
     @ddt.unpack
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
