@@ -42,11 +42,10 @@ class ReverificationBlock(XBlock):
     )
 
     related_assessment = String(
-        display_name="Associated Assessment",
+        display_name="Checkpoint Name",
         scope=Scope.content,
         default=CHECKPOINT_NAME,
-        help="The display name of the associated assessment. "
-             "You can create the assessment either before or after you create the associated checkpoint."
+        help="The name of the checkpoint (for example, 'Midterm A')"
     )
 
     is_configured = Boolean(

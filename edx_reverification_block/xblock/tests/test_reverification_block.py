@@ -85,7 +85,7 @@ class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
         xblock_fragment = self.runtime.render(xblock, "studio_view")
         editing_html = xblock_fragment.body_html()
 
-        self.assertIn("Associated Assessment", editing_html)
+        self.assertIn("Checkpoint Name", editing_html)
         self.assertIn(xblock.related_assessment, editing_html)
         self.assertIn("attempts", editing_html)
         self.assertIn(unicode(xblock.attempts), editing_html)
