@@ -61,7 +61,7 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         self.assertEqual(len(validation_messages.to_json().get('messages')), 1)
         self.assertEqual(validation_messages.to_json().get('messages')[0].get('type'), 'warning')
         self.assertIn(
-            "To associate the checkpoint with an assessment, select Edit.",
+            "This verification checkpoint does not have a name.",
             validation_messages.to_json().get('messages')[0].get('text')
         )
 

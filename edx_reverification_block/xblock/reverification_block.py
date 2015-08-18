@@ -42,10 +42,14 @@ class ReverificationBlock(XBlock):
     )
 
     related_assessment = String(
-        display_name="Checkpoint Name",
+        display_name="Verification Checkpoint Name",
         scope=Scope.content,
         default=CHECKPOINT_NAME,
-        help="The name of the checkpoint (for example, 'Midterm A')"
+        help=(
+            "The name of this verification checkpoint.  "
+            "You select this name in individual component or unit settings when you require "
+            "learners to pass the checkpoint to access course content."
+        )
     )
 
     is_configured = Boolean(
@@ -322,8 +326,8 @@ class ReverificationBlock(XBlock):
                 ValidationMessage(
                     ValidationMessage.WARNING,
                     self._(
-                        u"This checkpoint is not associated with an assessment. "
-                        u"To associate the checkpoint with an assessment, select Edit."
+                        u"This verification checkpoint does not have a name.  "
+                        u"To specify a name for this checkpoint, select Edit."
                     )
                 )
             )
