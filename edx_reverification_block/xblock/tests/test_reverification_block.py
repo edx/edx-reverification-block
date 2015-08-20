@@ -61,7 +61,7 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         self.assertEqual(len(validation_messages.to_json().get('messages')), 1)
         self.assertEqual(validation_messages.to_json().get('messages')[0].get('type'), 'warning')
         self.assertIn(
-            "To associate the checkpoint with an assessment, select Edit.",
+            "This verification checkpoint does not have a name.",
             validation_messages.to_json().get('messages')[0].get('text')
         )
 
@@ -85,7 +85,7 @@ class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
         xblock_fragment = self.runtime.render(xblock, "studio_view")
         editing_html = xblock_fragment.body_html()
 
-        self.assertIn("Associated Assessment", editing_html)
+        self.assertIn("Checkpoint Name", editing_html)
         self.assertIn(xblock.related_assessment, editing_html)
         self.assertIn("attempts", editing_html)
         self.assertIn(unicode(xblock.attempts), editing_html)
@@ -156,6 +156,7 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         ("denied", "unsuccessful"),
         ("error", "error"),
         ("unexpected", "error"),
+        ("not-verified", "reverify-not-verified"),
     )
     @ddt.unpack
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')

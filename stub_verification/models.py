@@ -15,7 +15,8 @@ class VerificationStatus(models.Model):
         ("submitted", "submitted"),
         ("approved", "approved"),
         ("denied", "denied"),
-        ("error", "error")
+        ("error", "error"),
+        ("not-verified", "not in a verified track")
     )
 
     course_id = models.CharField(max_length=255, db_index=True)

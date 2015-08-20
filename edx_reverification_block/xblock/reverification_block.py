@@ -42,11 +42,14 @@ class ReverificationBlock(XBlock):
     )
 
     related_assessment = String(
-        display_name="Associated Assessment",
+        display_name="Verification Checkpoint Name",
         scope=Scope.content,
         default=CHECKPOINT_NAME,
-        help="The display name of the associated assessment. "
-             "You can create the assessment either before or after you create the associated checkpoint."
+        help=(
+            "The name of this verification checkpoint.  "
+            "You select this name in individual component or unit settings when you require "
+            "learners to pass the checkpoint to access course content."
+        )
     )
 
     is_configured = Boolean(
@@ -63,6 +66,7 @@ class ReverificationBlock(XBlock):
     )
 
     TEMPLATE_FOR_STATUS = {
+        "not-verified": "static/html/not_verified.html",
         "skipped": "static/html/skipped.html",
         "submitted": "static/html/submitted.html",
         "approved": "static/html/approved.html",
@@ -103,9 +107,11 @@ class ReverificationBlock(XBlock):
 
         This will render the url to display in lms along with marketing text.
         """
+        service = self.runtime.service(self, "reverification")
+
         # Assume that if service is not available then it is
         # in studio_preview because service are defined in LMS
-        if not self.runtime.service(self, "reverification"):
+        if not service:
             return self.get_studio_preview()
 
         course_id = self.course_id
@@ -116,13 +122,13 @@ class ReverificationBlock(XBlock):
         if self.due and self.due < datetime.datetime.today().replace(tzinfo=pytz.UTC):
             verification_status = 'closed'
         else:
-            verification_status = self.runtime.service(self, "reverification").get_status(
+            verification_status = service.get_status(
                 user_id=user_id,
                 course_id=course_id,
                 related_assessment_location=item_id
             )
 
-        user_attempts = self.runtime.service(self, "reverification").get_attempts(
+        user_attempts = service.get_attempts(
             user_id=user_id,
             course_id=course_id,
             related_assessment_location=item_id,
@@ -136,7 +142,7 @@ class ReverificationBlock(XBlock):
         }
 
         if verification_status in self.ALLOW_REVERIFICATION_STATUSES:
-            reverification_link = self.runtime.service(self, "reverification").start_verification(
+            reverification_link = service.start_verification(
                 course_id=course_id,
                 related_assessment_location=item_id
             )
@@ -320,8 +326,8 @@ class ReverificationBlock(XBlock):
                 ValidationMessage(
                     ValidationMessage.WARNING,
                     self._(
-                        u"This checkpoint is not associated with an assessment. "
-                        u"To associate the checkpoint with an assessment, select Edit."
+                        u"This verification checkpoint does not have a name.  "
+                        u"To specify a name for this checkpoint, select Edit."
                     )
                 )
             )

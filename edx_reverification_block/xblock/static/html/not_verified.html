@@ -1,0 +1,14 @@
+{% load i18n %}
+<div class="reverify-xblock">
+  <div class="reverify-not-verified">
+    <div class="msg-title">{% trans "Verification Checkpoint" %}</div>
+    <div class="msg-content">
+        {% blocktrans with link_start='<a href="http://edx-guide-for-students.readthedocs.org/en/latest/SFD_certificates.html#verified-certificates">' link_end='</a>' %}
+        <p>Some learners who are working toward a verified certificate have to verify their identity before they can access this content. You do not have to verify your identity, and you can proceed to the next unit.</p>
+
+        <p> To learn more about verified certificates, see {{ link_start }}Verified Certificates{{ link_end }} in the <i>EdX Guide for Students</i>.
+        {% endblocktrans %}
+        {% trans "You are taking this exam as an honor student." %}
+    </div>
+  </div>
+</div>
