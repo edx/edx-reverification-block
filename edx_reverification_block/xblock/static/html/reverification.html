@@ -13,11 +13,11 @@
     {% else %}
     <div class="reverify-now-content">
       {% if not status %}
-      <div class="msg-title">{% trans "Identity verification required" %}</div>
+      <h3 class="msg-title">{% trans "Identity verification required" %}</h3>
       <div class="msg-content">
-        {% blocktrans with start_link='<a href="#" class="reverify-skip-link">' end_link="</a>" %}
+        {% blocktrans %}
         To receive credit for this course, you must verify your identity every time you receive a verification message.
-        If you do not want to verify your identity, you can {{ start_link }}opt out of verification{{ end_link}}.
+        If you do not want to verify your identity, you can opt out of verification.
         However, you will no longer be eligible for credit in the course.
         {% endblocktrans %}
       </div>
@@ -39,16 +39,19 @@
       {% endif %}
     </div>
     {% endif %}
+    <div class="action-container">
+      <a href="#" class="reverify-skip-link action action-default">Opt Out</a>
 
-    {% if remaining_attempts > 0 %}
-    <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">
-      {% if not status %}
-      {% trans "Verify Your Identity" %}
-      {% else %}
-      {% trans "Try Again" %}
+      {% if remaining_attempts > 0 %}
+      <button class="reverify-now-button action action-primary" data-href="{{ reverification_link }}">
+        {% if not status %}
+        {% trans "Verify Your Identity" %}
+        {% else %}
+        {% trans "Try Again" %}
+        {% endif %}
+      </button>
       {% endif %}
-    </button>
-    {% endif %}
+    </div>
     <div class="reverify-clear-line"></div>
   </div>
 
@@ -72,4 +75,12 @@
       <div class="reverify-clear-line" />
     </div>
   </div>
+</div>
+<div class="faq-reverification-block">
+  <h4>
+    {% trans "See Also" %}
+  </h4>
+  <a class="faq-link">
+    {% trans "Frequently asked questions about verification and earning academic credit" %}
+  </a>
 </div>
