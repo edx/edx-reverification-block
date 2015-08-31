@@ -113,32 +113,12 @@ $green: #1F8819;
 }
 
 .reverify-skip-confirm-wrapper {
-    padding: 20px 30px;
-    background-color: black;
-    border-left: 5px solid $red;
-
-    .msg-title,
-    .msg-content {
-        color: white;
-    }
+    @include verification-msg-box();
 
     .reverify-skip-actions {
         margin-top: 10px;
     }
 
-    .reverify-skip-cancel-button {
-        padding: 10px 30px;
-        background-color: black;
-        border: 1px solid white;
-        color: white;
-        width: 100%;
-    }
-
-    .reverify-skip-confirm-button {
-        @extend .reverify-action-primary;
-        margin-top: 15px;
-        width: 100%;
-    }
 }
 
 .reverify-basic {
@@ -155,11 +135,11 @@ $green: #1F8819;
 }
 
 .reverify-submitted {
-    @include msg-box($dark-gray);
+    @include verification-msg-box();
 }
 
 .reverify-approved {
-    @include msg-box($green);
+    @include verification-msg-box();
 }
 
 @media screen and (min-width: 716px) {
@@ -188,12 +168,6 @@ $green: #1F8819;
     .reverify-skip-confirm-wrapper {
         .reverify-skip-actions {
             @include float(right);
-        }
-
-        .reverify-skip-cancel-button,
-        .reverify-skip-confirm-button {
-            width: auto;
-            display: inline-block;
         }
     }
 
