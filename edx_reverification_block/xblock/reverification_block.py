@@ -107,6 +107,9 @@ class ReverificationBlock(XBlock):
 
         This will render the url to display in lms along with marketing text.
         """
+        # These are the statuses which get precedence over the closed status
+        precedent_statuses = ["submitted", "approved", "denied"]
+        date_today = datetime.datetime.today().replace(tzinfo=pytz.UTC)
         service = self.runtime.service(self, "reverification")
 
         # Assume that if service is not available then it is
@@ -119,14 +122,14 @@ class ReverificationBlock(XBlock):
         related_assessment = self.related_assessment
         user_id = unicode(self.scope_ids.user_id)
         fragment = Fragment()
-        if self.due and self.due < datetime.datetime.today().replace(tzinfo=pytz.UTC):
+        verification_status = service.get_status(
+            user_id=user_id,
+            course_id=course_id,
+            related_assessment_location=item_id
+        )
+
+        if verification_status not in precedent_statuses and self.due and self.due < date_today:
             verification_status = 'closed'
-        else:
-            verification_status = service.get_status(
-                user_id=user_id,
-                course_id=course_id,
-                related_assessment_location=item_id
-            )
 
         user_attempts = service.get_attempts(
             user_id=user_id,
