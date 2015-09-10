@@ -2,8 +2,10 @@
 Tests the edX Reverification XBlock functionality.
 """
 
+import datetime
 import json
 import os
+import pytz
 
 import ddt
 from mock import Mock, PropertyMock, patch
@@ -185,6 +187,40 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
 
         # Reloading the student view, we should see that we've skipped
         self._assert_in_student_view(xblock, "skipped")
+
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_closed_reverification(self, xblock):
+        # Check closed status when xblock due date passed
+        xblock.due = (datetime.datetime.today()-datetime.timedelta(1)).replace(tzinfo=pytz.UTC)
+        VerificationStatus.objects.create(
+            course_id=xblock.course_id,
+            checkpoint_location=unicode(xblock.scope_ids.usage_id),
+            user_id=xblock.scope_ids.user_id,
+            status="not-verified"
+        )
+
+        # Check that the status is displayed correctly
+        self._assert_in_student_view(xblock, "closed")
+
+    @ddt.data(
+        ("submitted", "submitted"),
+        ("approved", "approved"),
+        ("denied", "unsuccessful"),
+    )
+    @ddt.unpack
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_precedence_reverification_status(self, xblock, status, expected_content):
+        # Check reverification statuses that have precedence over closed status
+        xblock.due = (datetime.datetime.today()-datetime.timedelta(1)).replace(tzinfo=pytz.UTC)
+        VerificationStatus.objects.create(
+            course_id=xblock.course_id,
+            checkpoint_location=unicode(xblock.scope_ids.usage_id),
+            user_id=xblock.scope_ids.user_id,
+            status=status
+        )
+
+        # Check that the status is displayed correctly
+        self._assert_in_student_view(xblock, expected_content)
 
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_render_support_email(self, xblock):
