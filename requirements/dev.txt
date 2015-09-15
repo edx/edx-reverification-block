@@ -1,5 +1,5 @@
 -r base.txt
 -e .
 
-git+https://github.com/edx/xblock-sdk.git@8a3e40c3572c6d36715e4e6b699c94eab378e736#egg=xblock-sdk
+git+https://github.com/edx/xblock-sdk.git@6f504bfc6185900d1b2e37868066d38b95f07596#egg=xblock-sdk
 git+https://github.com/edx/i18n-tools.git@56f048af9b6868613c14aeae760548834c495011#egg=i18n_tools
