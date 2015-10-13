@@ -40,10 +40,10 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-reverification-block',
-    version='0.0.1',
+    version='0.0.2',
     author='edX',
     url='http://github.com/edx/edx-reverification-block',
-    description='edx-ora2',
+    description='An XBlock for in-course reverification.',
     license='AGPL',
     classifiers=[
         'Development Status :: 3 - Alpha',

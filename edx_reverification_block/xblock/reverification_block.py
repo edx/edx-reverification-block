@@ -19,6 +19,9 @@ log = logging.getLogger(__name__)
 CHECKPOINT_NAME = "Assessment 1"
 CREDIT_REQUIREMENT_NAMESPACE = "reverification"
 
+# Grace period after ICRV due date has passed
+ICRV_GRACE_PERIOD = 5
+
 
 @XBlock.wants("reverification")
 @XBlock.needs("i18n")
@@ -63,6 +66,13 @@ class ReverificationBlock(XBlock):
         scope=Scope.settings,
         default=None,
         help="ISO-8601 formatted string representing the due date of this related assessment."
+    )
+
+    grace_period = Integer(
+        display_name="Verification Grace Period",
+        scope=Scope.settings,
+        default=ICRV_GRACE_PERIOD,
+        help="The number of days learners can verify their identity after the assignment due date."
     )
 
     TEMPLATE_FOR_STATUS = {
@@ -128,7 +138,12 @@ class ReverificationBlock(XBlock):
             related_assessment_location=item_id
         )
 
-        if verification_status not in precedent_statuses and self.due and self.due < date_today:
+        grace_period = self.grace_period or ICRV_GRACE_PERIOD
+
+        if (
+            verification_status not in precedent_statuses
+            and self.due and self.due + datetime.timedelta(days=grace_period) < date_today
+        ):
             verification_status = 'closed'
 
         user_attempts = service.get_attempts(
@@ -204,7 +219,9 @@ class ReverificationBlock(XBlock):
                 (field, none_to_empty(getattr(self, field.name)), validator)
                 for field, validator in (
                     (cls.related_assessment, 'string'),
-                    (cls.attempts, 'number'))
+                    (cls.attempts, 'number'),
+                    (cls.grace_period, 'number')
+                )
             )
 
             context = {
@@ -231,6 +248,7 @@ class ReverificationBlock(XBlock):
         """
         related_assessment = data.get('related_assessment')
         attempts = data.get('attempts')
+        grace_period = data.get('grace_period')
 
         # Paranoid checks of the parameters we receive
         # None of these conditions should occur, because the front-end
@@ -247,10 +265,17 @@ class ReverificationBlock(XBlock):
             log.error("attempts field was %s, but we expected an integer", data['attempts'])
         elif attempts < 0:
             log.error("attempts field cannot be negative")
+        elif grace_period is None:
+            log.error("grace_period field not found in request")
+        elif not isinstance(grace_period, int):
+            log.error("grace_period value [%s] is not an integer.", data['grace_period'])
+        elif grace_period < 0:
+            log.error("grace_period field cannot be negative")
         else:
             self.related_assessment = data.get('related_assessment')
             self.attempts = data.get('attempts')
             self.is_configured = True
+            self.grace_period = data.get('grace_period')
 
             return {'result': 'success'}
 

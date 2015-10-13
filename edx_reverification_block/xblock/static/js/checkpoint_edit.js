@@ -24,6 +24,11 @@ function CheckpointEditBlock(runtime, element) {
         } else {
             data.attempts = Math.floor(Number(data.attempts));
         }
+        if ( !validators.number(data.grace_period) ) {
+            errors.push(gettext("Please enter a valid number for the Grace Period field."));
+        } else {
+            data.grace_period = Math.floor(Number(data.grace_period));
+        }
         return errors;
     }
 
@@ -33,7 +38,8 @@ function CheckpointEditBlock(runtime, element) {
 
         var data = {
             related_assessment: $(element).find('input[name=related_assessment]').val().trim(),
-            attempts: $(element).find('select[name=attempts]').val().trim()
+            attempts: $(element).find('select[name=attempts]').val().trim(),
+            grace_period: $(element).find('input[name=grace_period]').val().trim()
         };
 
         var validation_errors = validate(data);

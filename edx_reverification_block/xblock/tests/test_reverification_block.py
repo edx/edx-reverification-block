@@ -42,7 +42,7 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
         # Now set 'related_assessment' and 'attempts' fields and check that
         # values of these fields set correctly and also test that configuration
         # message does not appear
-        data = json.dumps({'related_assessment': 'FinalExam', 'attempts': 5})
+        data = json.dumps({'related_assessment': 'FinalExam', 'attempts': 5, 'grace_period': 0})
         resp = self.request(xblock, 'studio_submit', data, response_format='json')
         self.assertTrue(resp.get('result'))
         xblock_fragment = self.runtime.render(xblock, "student_view")
@@ -69,7 +69,7 @@ class TestStudioPreview(XBlockHandlerTestCaseMixin, TestCase):
 
         # now set fields on Reverification XBlock and check that 'validate'
         # method does not give warning message to configure it
-        data = json.dumps({'related_assessment': 'FinalExam', 'attempts': 5})
+        data = json.dumps({'related_assessment': 'FinalExam', 'attempts': 5, 'grace_period': 1})
         resp = self.request(xblock, 'studio_submit', data, response_format='json')
         self.assertTrue(resp.get('result'))
         validation_messages = xblock.validate()
@@ -93,8 +93,8 @@ class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
         self.assertIn(unicode(xblock.attempts), editing_html)
 
     @ddt.data(
-        {'attempts': 5, 'related_assessment': 'final_exam'},
-        {'attempts': 5, 'related_assessment': u'\u2603'},
+        {'attempts': 5, 'related_assessment': 'final_exam', 'grace_period': 5},
+        {'attempts': 5, 'related_assessment': u'\u2603', 'grace_period': 0},
     )
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_studio_submit_success(self, xblock, payload):
@@ -125,6 +125,12 @@ class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
         {'attempts': 'foo', 'related_assessment': 'final_exam'},
         {'attempts': '45.67', 'related_assessment': 'final_exam'},
         {'attempts': 1, 'related_assessment': 5},
+        # Negative grace_period
+        {'grace_period': -1, 'related_assessment': 'final_exam', 'attempts': 1},
+        # Wrong type
+        {'grace_period': None, 'related_assessment': 'final_exam', 'attempts': 1},
+        {'grace_period': '1.5', 'related_assessment': 'final_exam', 'attempts': 1},
+        {'grace_period': 'testing', 'related_assessment': 'final_exam', 'attempts': 1},
     )
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_studio_submit_error(self, xblock, payload):
@@ -135,6 +141,7 @@ class TestStudioEditing(XBlockHandlerTestCaseMixin, TestCase):
         self.assertEqual(xblock.related_assessment, "Assessment 1")
         self.assertEqual(xblock.attempts, 0)
         self.assertFalse(xblock.is_configured)
+        self.assertEqual(xblock.grace_period, 5)
 
 
 @ddt.ddt
@@ -188,10 +195,27 @@ class TestStudentView(XBlockHandlerTestCaseMixin, TestCase):
         # Reloading the student view, we should see that we've skipped
         self._assert_in_student_view(xblock, "skipped")
 
+    @ddt.data(0, 1, 2, 3, 4)
+    @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
+    def test_grace_period_with_expired_due_date(self, xblock, grace_days):
+        # Verify that user can view the icrv for next 5 days even due data is expired.
+        # If due date is 1st Jan then user can view icrv till 5th Jan.
+
+        xblock.due = (datetime.datetime.today()-datetime.timedelta(grace_days)).replace(tzinfo=pytz.UTC)
+        VerificationStatus.objects.create(
+            course_id=xblock.course_id,
+            checkpoint_location=unicode(xblock.scope_ids.usage_id),
+            user_id=xblock.scope_ids.user_id,
+            status="not-verified"
+        )
+
+        # Check that the status is displayed correctly
+        self._assert_in_student_view(xblock, "reverify-not-verified")
+
     @scenario(TESTS_BASE_DIR + '/data/basic_scenario.xml', user_id='bob')
     def test_closed_reverification(self, xblock):
         # Check closed status when xblock due date passed
-        xblock.due = (datetime.datetime.today()-datetime.timedelta(1)).replace(tzinfo=pytz.UTC)
+        xblock.due = (datetime.datetime.today()-datetime.timedelta(5)).replace(tzinfo=pytz.UTC)
         VerificationStatus.objects.create(
             course_id=xblock.course_id,
             checkpoint_location=unicode(xblock.scope_ids.usage_id),
