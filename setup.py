@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 from setuptools import setup
-
-PACKAGES = [
-    'edx_reverification_block',
-    'edx_reverification_block.xblock',
-]
+from setuptools import setup, find_packages
 
 
 def is_requirement(line):
@@ -52,7 +48,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
     ],
-    packages=PACKAGES,
+    packages=find_packages(exclude=["tests"]),
     install_requires=load_requirements('requirements/base.txt'),
     tests_require=load_requirements('requirements/test.txt'),
     entry_points={
