@@ -35,7 +35,7 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-reverification-block',
-    version='0.0.3',
+    version='0.0.4',
     author='edX',
     url='http://github.com/edx/edx-reverification-block',
     description='An XBlock for in-course reverification.',
@@ -48,9 +48,9 @@ setup(
         'Programming Language :: Python',
     ],
     packages=find_packages(exclude=["tests"]),
-    package_data={
-        '': ['*.html', '*.underscore', '*.png', '*.js', '*.xml']
-    },
+    include_package_data=True,
+    dependency_links=[
+    ],
     install_requires=load_requirements('requirements/base.txt'),
     tests_require=load_requirements('requirements/test.txt'),
     entry_points={
