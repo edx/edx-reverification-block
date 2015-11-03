@@ -1,4 +1,4 @@
-git+https://github.com/edx/xblock-sdk.git@6f504bfc6185900d1b2e37868066d38b95f07596#egg=xblock-sdk
+git+https://github.com/edx/xblock-sdk.git@ned/upgrade-django-18#egg=xblock-sdk==1.0
 git+https://github.com/edx/i18n-tools.git@56f048af9b6868613c14aeae760548834c495011#egg=i18n_tools
 
 coverage==3.7.1
