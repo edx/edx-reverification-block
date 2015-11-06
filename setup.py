@@ -35,7 +35,7 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-reverification-block',
-    version='1.0',
+    version='0.0.5',
     author='edX',
     url='http://github.com/edx/edx-reverification-block',
     description='An XBlock for in-course reverification.',
