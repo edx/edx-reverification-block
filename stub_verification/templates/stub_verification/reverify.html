@@ -2,7 +2,7 @@
 
 <p>This is a fake version of the reverification flow, where users would submit photos of their faces.</p>
 
-<form method="POST" action="{% url stub_submit_reverification_photos %}">
+<form method="POST" action="{% url 'stub_submit_reverification_photos' %}">
     {% csrf_token %}
     <input type="hidden" name="course_id" value="{{ course_id }}"/>
     <input type="hidden" name="checkpoint_location" value="{{ checkpoint_location }}"/>

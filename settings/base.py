@@ -120,9 +120,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
-    # Third party
-    'south',
-
     # XBlock
     'workbench',
     'sample_xblocks.basic',  # Needs to be an app for template lookup
